@@ -1,5 +1,14 @@
 [
   {
+    "id": "about-written",
+    "date": "2026-09-21",
+    "title": "把「关于」写上了",
+    "summary": "那一格一直是空的，这次用几句话和一排颜色把它填上。",
+    "kind": "补完",
+    "colors": ["#6d9ed6", "#e9b949", "#e56b6f", "#70b88b", "#9a7bc2"],
+    "url": "index.html#about"
+  },
+  {
     "id": "put-it-back",
     "date": "2026-09-21",
     "kind": "quiet",
