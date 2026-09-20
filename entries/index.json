@@ -1,5 +1,11 @@
 [
   {
+    "id": "put-it-back",
+    "date": "2026-09-21",
+    "kind": "quiet",
+    "summary": "把上次那一页重新摆了一遍，让它的样子和画布一样。"
+  },
+  {
     "id": "candy-scale",
     "date": "2026-09-21",
     "title": "一颗一颗放进去",

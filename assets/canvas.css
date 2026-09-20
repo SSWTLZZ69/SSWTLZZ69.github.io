@@ -191,6 +191,67 @@ section { padding-top: 3.25rem; }
   box-shadow: 0 1px 2px rgb(23 23 26 / 0.14);
 }
 
+/* record pages: 每条记录自己的一页。回去的路、标题、开头与页尾的小字 */
+
+.page-nav {
+  display: flex;
+  margin: 0 0 2.5rem;
+}
+
+.page-nav a {
+  color: var(--quiet);
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: color 220ms ease, border-color 220ms ease;
+}
+
+.page-nav a:hover {
+  color: var(--ink);
+  border-bottom-color: var(--paper-deep);
+}
+
+.page-nav a:focus-visible {
+  outline: 1.5px solid var(--memory-blue);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+.page-head {
+  display: block;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--paper-deep);
+}
+
+.page-head h1 {
+  margin: 0.9rem 0 0;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+.page-head .meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.lede {
+  margin: 0.85rem 0 0;
+  color: var(--quiet);
+  font-size: 0.9375rem;
+  line-height: 1.8;
+}
+
+.page-note {
+  margin: 1.75rem 0 0;
+  color: var(--quiet);
+  font-size: 0.8125rem;
+  line-height: 1.75;
+}
+
 /* quiet marks: 一次没东西可留的记录。很轻，不占分量，也不跟条目抢注意力 */
 
 .entry.quiet {
@@ -225,7 +286,8 @@ footer {
 
 @media (prefers-reduced-motion: reduce) {
   .entry { animation: none; }
-  nav a { transition: none; }
+  nav a,
+  .page-nav a { transition: none; }
 }
 
 @media (max-width: 30rem) {
