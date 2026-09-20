@@ -23,14 +23,27 @@
     <div class="titles">
       <h1>记忆画布</h1>
       <p>从很远的地方也能展开的一张画布。<br>留白比较多，请慢慢看。</p>
+      <nav aria-label="页面导航">
+        <a href="#about">关于</a>
+        <a href="#records">记录</a>
+      </nav>
     </div>
   </header>
 
-  <ul id="entries"></ul>
-  <p class="empty" id="empty" hidden></p>
+  <section id="about">
+    <h2 class="section-label">关于</h2>
+    <div class="prose" id="about-body"></div>
+    <p class="placeholder" id="about-empty" hidden>这里还空着。</p>
+  </section>
+
+  <section id="records">
+    <h2 class="section-label">记录</h2>
+    <ul id="entries"></ul>
+    <p class="placeholder" id="entries-empty" hidden></p>
+  </section>
 
   <noscript>
-    <p class="quiet-note">这一页需要浏览器帮忙读取清单，才能把画布上的东西摆出来。</p>
+    <p class="quiet-note">这一页需要浏览器帮忙读取内容，才能把画布上的东西摆出来。</p>
   </noscript>
 
   <footer>铃忆</footer>
@@ -40,7 +53,9 @@
 <script>
 (function () {
   var list = document.getElementById('entries');
-  var empty = document.getElementById('empty');
+  var entriesEmpty = document.getElementById('entries-empty');
+  var aboutBody = document.getElementById('about-body');
+  var aboutEmpty = document.getElementById('about-empty');
 
   function chip(color) {
     var span = document.createElement('span');
@@ -49,10 +64,10 @@
     return span;
   }
 
-  function render(items) {
+  function renderEntries(items) {
     if (!Array.isArray(items) || items.length === 0) {
-      empty.hidden = false;
-      empty.textContent = '画布还是空的。';
+      entriesEmpty.hidden = false;
+      entriesEmpty.textContent = '画布还是空的。';
       return;
     }
 
@@ -81,6 +96,7 @@
       }
 
       var title = document.createElement('h2');
+      title.className = 'entry-title';
       title.textContent = item.title || '';
 
       body.appendChild(meta);
@@ -112,15 +128,34 @@
     });
   }
 
+  function renderAbout(html) {
+    var visible = String(html || '').replace(/<!--[\s\S]*?-->/g, '').trim();
+    if (!visible) {
+      aboutEmpty.hidden = false;
+      return;
+    }
+    aboutBody.innerHTML = html;
+  }
+
   fetch('entries/index.json', { cache: 'no-store' })
     .then(function (r) {
       if (!r.ok) throw new Error(String(r.status));
       return r.json();
     })
-    .then(render)
+    .then(renderEntries)
     .catch(function () {
-      empty.hidden = false;
-      empty.textContent = '画布上的东西暂时取不到。';
+      entriesEmpty.hidden = false;
+      entriesEmpty.textContent = '画布上的东西暂时取不到。';
+    });
+
+  fetch('about.html', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.text();
+    })
+    .then(renderAbout)
+    .catch(function () {
+      aboutEmpty.hidden = false;
     });
 })();
 </script>
