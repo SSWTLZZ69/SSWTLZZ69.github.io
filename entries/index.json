@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": "candy-scale",
+    "date": "2026-09-21",
+    "title": "一颗一颗放进去",
+    "summary": "按一下颜色，瓶子里就多一颗。放得越多，瓶子会往下沉一点。",
+    "kind": "小玩意",
+    "colors": ["#6d9ed6", "#e9b949", "#e56b6f", "#70b88b", "#9a7bc2"],
+    "url": "entries/candy-scale.html"
+  }
+]

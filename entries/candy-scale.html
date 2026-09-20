@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一颗一颗放进去 · 记忆画布</title>
+<meta name="description" content="按一下颜色，就往瓶子里放一颗。放得越多，瓶子会往下沉一点。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .stage {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.25rem;
+    padding-top: 0.5rem;
+  }
+
+  .jar-wrap {
+    transform: translateY(var(--depth, 0));
+    transition: transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .jar {
+    display: block;
+    width: 152px;
+    height: auto;
+    overflow: visible;
+  }
+
+  .jar .jar-body {
+    fill: rgb(255 255 255 / 0.78);
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  .jar .jar-lid {
+    fill: var(--paper-deep);
+    stroke: var(--ink);
+    stroke-width: 1.6;
+  }
+
+  .jar .jar-line {
+    stroke: var(--paper-deep);
+    stroke-width: 1.6;
+  }
+
+  .candy {
+    transform-box: fill-box;
+    transform-origin: center;
+    stroke: rgb(23 23 26 / 0.16);
+    stroke-width: 1;
+    animation: drop 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .reading {
+    margin: 2rem 0 0;
+    text-align: center;
+    color: var(--quiet);
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+  }
+
+  .pickers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .picker {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.95rem;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--paper-deep);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 200ms ease;
+  }
+
+  .picker:hover:not(:disabled) { border-color: var(--quiet); }
+
+  .picker:focus-visible {
+    outline: 1.5px solid var(--memory-blue);
+    outline-offset: 3px;
+  }
+
+  .picker:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .picker .dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+  }
+
+  .picker .weight {
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .reset {
+    margin-top: 1.25rem;
+    padding: 0.5rem 1.05rem;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--quiet);
+    background: transparent;
+    border: 1px solid var(--paper-deep);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 200ms ease, border-color 200ms ease;
+  }
+
+  .reset:hover { color: var(--ink); border-color: var(--quiet); }
+
+  .reset:focus-visible {
+    outline: 1.5px solid var(--memory-blue);
+    outline-offset: 3px;
+  }
+
+  @keyframes drop {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .jar-wrap { transition: none; }
+    .candy { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="返回">
+    <a href="../index.html#records">← 回到画布</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-09-21">2026-09-21</time>
+      <span>小玩意</span>
+    </div>
+    <h1>一颗一颗放进去</h1>
+    <p class="lede">按一下颜色，瓶子里就多一颗。<br>放得越多，瓶子会往下沉一点。</p>
+  </header>
+
+  <section id="tool" aria-labelledby="tool-label">
+    <h2 class="section-label" id="tool-label">放一颗</h2>
+
+    <div class="stage">
+      <div class="jar-wrap" id="jar-wrap">
+        <svg class="jar" viewBox="0 0 120 200" role="img" aria-label="一只透明的瓶子，里面装着放进去的东西">
+          <rect class="jar-lid" x="50" y="3" width="20" height="11" rx="5"/>
+          <rect class="jar-body" x="16" y="14" width="88" height="170" rx="26"/>
+          <line class="jar-line" x1="30" y1="34" x2="90" y2="34"/>
+          <g id="candies"></g>
+        </svg>
+      </div>
+    </div>
+
+    <p class="reading" id="reading" aria-live="polite">空的。</p>
+
+    <ul class="pickers" id="pickers"></ul>
+
+    <button class="reset" id="reset" type="button">倒出来</button>
+
+    <p class="page-note">颜色不一样，重量也不一样。装满了就先倒出来。</p>
+
+    <noscript>
+      <p class="quiet-note">这一页需要浏览器帮忙，才能把东西放进瓶子里。</p>
+    </noscript>
+  </section>
+
+  <footer>铃忆</footer>
+
+</main>
+
+<script>
+(function () {
+  var CAP = 12;
+
+  var palette = [
+    { name: '蓝', color: '#6d9ed6', weight: 3 },
+    { name: '黄', color: '#e9b949', weight: 2 },
+    { name: '红', color: '#e56b6f', weight: 4 },
+    { name: '绿', color: '#70b88b', weight: 2 },
+    { name: '紫', color: '#9a7bc2', weight: 5 }
+  ];
+
+  var candies = document.getElementById('candies');
+  var wrap = document.getElementById('jar-wrap');
+  var reading = document.getElementById('reading');
+  var pickers = document.getElementById('pickers');
+  var reset = document.getElementById('reset');
+
+  var placed = [];
+
+  function wobble(n) {
+    var x = Math.sin(n * 12.9898) * 43758.5453;
+    return x - Math.floor(x);
+  }
+
+  function place(index) {
+    var row = Math.floor(index / 3);
+    var column = index % 3;
+    var cx = 42 + column * 20 + (wobble(index + 1) - 0.5) * 10;
+    var cy = 154 - row * 21 + (wobble(index + 41) - 0.5) * 6;
+    var r = 7.6 + (wobble(index + 97) - 0.5) * 1.6;
+    return { cx: cx, cy: cy, r: r };
+  }
+
+  function draw(index, color) {
+    var spot = place(index);
+    var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('class', 'candy');
+    circle.setAttribute('cx', spot.cx.toFixed(2));
+    circle.setAttribute('cy', spot.cy.toFixed(2));
+    circle.setAttribute('r', spot.r.toFixed(2));
+    circle.setAttribute('fill', color);
+    candies.appendChild(circle);
+  }
+
+  function report() {
+    var total = placed.reduce(function (sum, item) { return sum + item.weight; }, 0);
+    if (placed.length === 0) {
+      reading.textContent = '空的。';
+    } else if (placed.length >= CAP) {
+      reading.textContent = placed.length + ' 颗 · 重 ' + total + ' · 满了';
+    } else {
+      reading.textContent = placed.length + ' 颗 · 重 ' + total;
+    }
+    wrap.style.setProperty('--depth', (Math.min(placed.length, CAP) * 1.4).toFixed(1) + 'px');
+    var full = placed.length >= CAP;
+    Array.prototype.forEach.call(pickers.querySelectorAll('button'), function (button) {
+      button.disabled = full;
+    });
+    reset.disabled = placed.length === 0;
+  }
+
+  function add(item) {
+    if (placed.length >= CAP) return;
+    draw(placed.length, item.color);
+    placed.push(item);
+    report();
+  }
+
+  palette.forEach(function (item) {
+    var li = document.createElement('li');
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'picker';
+    button.setAttribute('aria-label', '放一颗' + item.name + '色的，重 ' + item.weight);
+
+    var dot = document.createElement('span');
+    dot.className = 'dot';
+    dot.setAttribute('aria-hidden', 'true');
+    dot.style.background = item.color;
+
+    var name = document.createElement('span');
+    name.textContent = item.name;
+
+    var weight = document.createElement('span');
+    weight.className = 'weight';
+    weight.textContent = '重 ' + item.weight;
+
+    button.appendChild(dot);
+    button.appendChild(name);
+    button.appendChild(weight);
+    button.addEventListener('click', function () { add(item); });
+
+    li.appendChild(button);
+    pickers.appendChild(li);
+  });
+
+  reset.addEventListener('click', function () {
+    placed = [];
+    while (candies.firstChild) candies.removeChild(candies.firstChild);
+    report();
+  });
+
+  report();
+})();
+</script>
+
+</body>
+</html>
