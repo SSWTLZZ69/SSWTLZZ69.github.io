@@ -191,56 +191,21 @@ section { padding-top: 3.25rem; }
   box-shadow: 0 1px 2px rgb(23 23 26 / 0.14);
 }
 
-/* standalone pages: a record's own page */
+/* quiet marks: 一次没东西可留的记录。很轻，不占分量，也不跟条目抢注意力 */
 
-.page-nav {
-  margin: 0 0 2.5rem;
-}
-
-.page-nav a {
-  color: var(--quiet);
-  font-size: 0.8125rem;
-  letter-spacing: 0.14em;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  padding-bottom: 2px;
-  transition: color 220ms ease, border-color 220ms ease;
-}
-
-.page-nav a:hover {
-  color: var(--ink);
-  border-bottom-color: var(--paper-deep);
-}
-
-.page-nav a:focus-visible {
-  outline: 1.5px solid var(--memory-blue);
-  outline-offset: 4px;
-  border-radius: 3px;
-}
-
-.page-head {
-  display: block;
+.entry.quiet {
+  padding: 1.5rem 0;
   border-bottom: 0;
-  padding-bottom: 0;
 }
 
-.page-head h1 {
-  margin: 0.9rem 0 0;
-  font-size: 1.3125rem;
-  font-weight: 500;
+.entry.quiet .meta {
+  font-size: 0.75rem;
   letter-spacing: 0.1em;
 }
 
-.page-head .lede {
-  margin: 1.1rem 0 0;
+.entry.quiet .quiet-line {
+  margin: 0.45rem 0 0;
   color: var(--quiet);
-  font-size: 0.9375rem;
-  line-height: 1.8;
-}
-
-.page-note {
-  margin: 1.25rem 0 0;
-  color: #45434a;
   font-size: 0.9375rem;
 }
 
@@ -261,7 +226,6 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   .entry { animation: none; }
   nav a { transition: none; }
-  .page-nav a { transition: none; }
 }
 
 @media (max-width: 30rem) {

@@ -76,8 +76,10 @@
     });
 
     sorted.forEach(function (item, i) {
+      var isQuiet = String(item.kind || '').toLowerCase() === 'quiet';
+
       var li = document.createElement('li');
-      li.className = 'entry';
+      li.className = isQuiet ? 'entry quiet' : 'entry';
       li.style.animationDelay = Math.min(i * 70, 420) + 'ms';
 
       var body = document.createElement('div');
@@ -89,18 +91,30 @@
       time.textContent = item.date || '';
       meta.appendChild(time);
 
-      if (item.kind) {
+      if (item.kind && !isQuiet) {
         var kind = document.createElement('span');
         kind.textContent = item.kind;
         meta.appendChild(kind);
       }
 
-      var title = document.createElement('h2');
-      title.className = 'entry-title';
-      title.textContent = item.title || '';
-
       body.appendChild(meta);
-      body.appendChild(title);
+
+      if (isQuiet) {
+        var line = document.createElement('p');
+        line.className = 'quiet-line';
+        line.textContent = item.summary || '';
+        body.appendChild(line);
+        li.appendChild(body);
+        list.appendChild(li);
+        return;
+      }
+
+      if (item.title) {
+        var title = document.createElement('h2');
+        title.className = 'entry-title';
+        title.textContent = item.title;
+        body.appendChild(title);
+      }
 
       if (item.summary) {
         var summary = document.createElement('p');
