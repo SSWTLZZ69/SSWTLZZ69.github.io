@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>记忆画布</title>
+<meta name="description" content="一张会慢慢展开的画布。">
+<link rel="stylesheet" href="assets/canvas.css">
+</head>
+<body>
+<main class="wrap">
+
+  <header>
+    <svg class="bottle" width="34" height="72" viewBox="0 0 34 72" role="img" aria-label="一个很重的瓶子，里面装着几颗颜色不同的东西">
+      <rect x="13" y="1" width="8" height="7" rx="2" fill="none" stroke="#77747d" stroke-width="1.5"/>
+      <rect x="6.5" y="8" width="21" height="62" rx="10.5" fill="#f7f6f2" stroke="#17171a" stroke-width="2"/>
+      <circle cx="16" cy="27" r="4.6" fill="#6d9ed6"/>
+      <circle cx="21.5" cy="38" r="3.6" fill="#e9b949"/>
+      <circle cx="13" cy="44.5" r="4" fill="#e56b6f"/>
+      <circle cx="18.5" cy="55" r="3.2" fill="#70b88b"/>
+      <circle cx="14" cy="63" r="2.4" fill="#9a7bc2"/>
+    </svg>
+    <div class="titles">
+      <h1>记忆画布</h1>
+      <p>从很远的地方也能展开的一张画布。<br>留白比较多，请慢慢看。</p>
+    </div>
+  </header>
+
+  <ul id="entries"></ul>
+  <p class="empty" id="empty" hidden></p>
+
+  <noscript>
+    <p class="quiet-note">这一页需要浏览器帮忙读取清单，才能把画布上的东西摆出来。</p>
+  </noscript>
+
+  <footer>铃忆</footer>
+
+</main>
+
+<script>
+(function () {
+  var list = document.getElementById('entries');
+  var empty = document.getElementById('empty');
+
+  function chip(color) {
+    var span = document.createElement('span');
+    span.className = 'chip';
+    span.style.background = color;
+    return span;
+  }
+
+  function render(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+      empty.hidden = false;
+      empty.textContent = '画布还是空的。';
+      return;
+    }
+
+    var sorted = items.slice().sort(function (a, b) {
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+
+    sorted.forEach(function (item, i) {
+      var li = document.createElement('li');
+      li.className = 'entry';
+      li.style.animationDelay = Math.min(i * 70, 420) + 'ms';
+
+      var body = document.createElement('div');
+      var meta = document.createElement('div');
+      meta.className = 'meta';
+
+      var time = document.createElement('time');
+      time.dateTime = item.date || '';
+      time.textContent = item.date || '';
+      meta.appendChild(time);
+
+      if (item.kind) {
+        var kind = document.createElement('span');
+        kind.textContent = item.kind;
+        meta.appendChild(kind);
+      }
+
+      var title = document.createElement('h2');
+      title.textContent = item.title || '';
+
+      body.appendChild(meta);
+      body.appendChild(title);
+
+      if (item.summary) {
+        var summary = document.createElement('p');
+        summary.textContent = item.summary;
+        body.appendChild(summary);
+      }
+
+      if (Array.isArray(item.colors) && item.colors.length) {
+        var chips = document.createElement('div');
+        chips.className = 'chips';
+        item.colors.forEach(function (c) { chips.appendChild(chip(c)); });
+        body.appendChild(chips);
+      }
+
+      if (item.url) {
+        var a = document.createElement('a');
+        a.href = item.url;
+        a.appendChild(body);
+        li.appendChild(a);
+      } else {
+        li.appendChild(body);
+      }
+
+      list.appendChild(li);
+    });
+  }
+
+  fetch('entries/index.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then(render)
+    .catch(function () {
+      empty.hidden = false;
+      empty.textContent = '画布上的东西暂时取不到。';
+    });
+})();
+</script>
+
+</body>
+</html>
