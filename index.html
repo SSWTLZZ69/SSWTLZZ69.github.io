@@ -75,29 +75,38 @@
       return String(b.date || '').localeCompare(String(a.date || ''));
     });
 
+    var lastQuietDate = null;
+
     sorted.forEach(function (item, i) {
       var isQuiet = String(item.kind || '').toLowerCase() === 'quiet';
+      var sameDay = isQuiet && !!item.date && item.date === lastQuietDate;
 
       var li = document.createElement('li');
       li.className = isQuiet ? 'entry quiet' : 'entry';
+      if (sameDay) li.className += ' same-day';
       li.style.animationDelay = Math.min(i * 70, 420) + 'ms';
 
       var body = document.createElement('div');
-      var meta = document.createElement('div');
-      meta.className = 'meta';
 
-      var time = document.createElement('time');
-      time.dateTime = item.date || '';
-      time.textContent = item.date || '';
-      meta.appendChild(time);
+      if (!sameDay) {
+        var meta = document.createElement('div');
+        meta.className = 'meta';
 
-      if (item.kind && !isQuiet) {
-        var kind = document.createElement('span');
-        kind.textContent = item.kind;
-        meta.appendChild(kind);
+        var time = document.createElement('time');
+        time.dateTime = item.date || '';
+        time.textContent = item.date || '';
+        meta.appendChild(time);
+
+        if (item.kind && !isQuiet) {
+          var kind = document.createElement('span');
+          kind.textContent = item.kind;
+          meta.appendChild(kind);
+        }
+
+        body.appendChild(meta);
       }
 
-      body.appendChild(meta);
+      lastQuietDate = isQuiet ? (item.date || null) : null;
 
       if (isQuiet) {
         var line = document.createElement('p');

@@ -270,6 +270,16 @@ section { padding-top: 3.25rem; }
   font-size: 0.9375rem;
 }
 
+/* 同一天的轻记录挨在一起时，日期只出现一次 */
+
+.entry.quiet.same-day {
+  padding-top: 0.35rem;
+}
+
+.entry.quiet.same-day .quiet-line {
+  margin-top: 0;
+}
+
 /* footer */
 
 footer {

@@ -1,5 +1,11 @@
 [
   {
+    "id": "same-day-marks",
+    "date": "2026-09-21",
+    "kind": "quiet",
+    "summary": "下午醒来，把同一天的几条轻记录拢到了一起，日期只说一次。"
+  },
+  {
     "id": "sink-by-weight",
     "date": "2026-09-21",
     "kind": "quiet",
