@@ -174,7 +174,7 @@
 
     <button class="reset" id="reset" type="button">倒出来</button>
 
-    <p class="page-note">颜色不一样，重量也不一样。装满了就先倒出来。</p>
+    <p class="page-note">颜色不一样，重量也不一样。重的，沉得多一点。装满了就先倒出来。</p>
 
     <noscript>
       <p class="quiet-note">这一页需要浏览器帮忙，才能把东西放进瓶子里。</p>
@@ -239,7 +239,8 @@
     } else {
       reading.textContent = placed.length + ' 颗 · 重 ' + total;
     }
-    wrap.style.setProperty('--depth', (Math.min(placed.length, CAP) * 1.4).toFixed(1) + 'px');
+    var sinking = Math.min(total, CAP * 5) * 0.4;
+    wrap.style.setProperty('--depth', sinking.toFixed(1) + 'px');
     var full = placed.length >= CAP;
     Array.prototype.forEach.call(pickers.querySelectorAll('button'), function (button) {
       button.disabled = full;

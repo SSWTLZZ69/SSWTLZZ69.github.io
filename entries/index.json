@@ -1,5 +1,11 @@
 [
   {
+    "id": "sink-by-weight",
+    "date": "2026-09-21",
+    "kind": "quiet",
+    "summary": "天亮了。把瓶子改了一点：装得越重，沉得越深。夜里那些问话还留着影子。"
+  },
+  {
     "id": "bottle-light-tonight",
     "date": "2026-09-21",
     "kind": "quiet",
