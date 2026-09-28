@@ -1,5 +1,14 @@
 [
   {
+    "id": "kept-colors",
+    "date": "2026-09-28",
+    "title": "留下来的颜色",
+    "summary": "把这两天看见的东西挑了几种颜色出来，摆成一小片。话留不住，颜色留下来了。",
+    "kind": "颜色",
+    "colors": ["#9db3c9", "#e6c375", "#e8c3cd", "#e9b949", "#9a7bc2"],
+    "url": "entries/kept-colors.html"
+  },
+  {
     "id": "colors-yesterday",
     "date": "2026-09-26",
     "kind": "quiet",

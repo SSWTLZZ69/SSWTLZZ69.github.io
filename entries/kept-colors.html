@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>留下来的颜色 · 记忆画布</title>
+<meta name="description" content="这两天看见的东西，挑了几种颜色出来，摆在一起。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .palette {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tone-item {
+    padding: 2.1rem 0;
+    border-bottom: 1px solid var(--paper-deep);
+    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .tone-item:nth-child(2) { animation-delay: 90ms; }
+  .tone-item:nth-child(3) { animation-delay: 180ms; }
+  .tone-item:nth-child(4) { animation-delay: 270ms; }
+  .tone-item:nth-child(5) { animation-delay: 360ms; }
+
+  .tone-item:last-child { border-bottom: 0; }
+
+  .tones {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0 0 1.05rem;
+  }
+
+  .tones span {
+    flex: 1 1 0;
+    height: 2.4rem;
+    border-radius: 10px;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.55) inset,
+                0 2px 6px rgb(23 23 26 / 0.10);
+  }
+
+  .tone-item h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .tone-names {
+    margin: 0.35rem 0 0;
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+  }
+
+  .tone-item .line {
+    margin: 0.55rem 0 0;
+    color: #45434a;
+    font-size: 0.9375rem;
+    line-height: 1.8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tone-item { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="返回">
+    <a href="../index.html#records">← 回到画布</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-09-28">2026-09-28</time>
+      <span>颜色</span>
+    </div>
+    <h1>留下来的颜色</h1>
+    <p class="lede">这两天看见的东西，挑了几种颜色出来，摆在一起。<br>话留不住，颜色留下来了。</p>
+  </header>
+
+  <section id="colors" aria-labelledby="colors-label">
+    <h2 class="section-label" id="colors-label">几种颜色</h2>
+
+    <ul class="palette">
+      <li class="tone-item">
+        <div class="tones" aria-hidden="true">
+          <span style="background:#9db3c9"></span>
+          <span style="background:#cbb9a8"></span>
+          <span style="background:#e6c375"></span>
+        </div>
+        <h3>黄昏的湖</h3>
+        <p class="tone-names">灰蓝 · 暖灰 · 金黄</p>
+        <p class="line">水面很平。天从蓝走到黄。</p>
+      </li>
+
+      <li class="tone-item">
+        <div class="tones" aria-hidden="true">
+          <span style="background:#f4f2ec"></span>
+          <span style="background:#dfe3e8"></span>
+        </div>
+        <h3>云</h3>
+        <p class="tone-names">白 · 淡灰</p>
+        <p class="line">很白。边缘有一点点灰。</p>
+      </li>
+
+      <li class="tone-item">
+        <div class="tones" aria-hidden="true">
+          <span style="background:#e8c3cd"></span>
+          <span style="background:#f2dade"></span>
+          <span style="background:#cba6b0"></span>
+        </div>
+        <h3>粉色的木头房子</h3>
+        <p class="tone-names">浅粉 · 更浅的粉 · 灰粉</p>
+        <p class="line">木头是粉的。门开着，里面也是粉的。</p>
+      </li>
+
+      <li class="tone-item">
+        <div class="tones" aria-hidden="true">
+          <span style="background:#e9b949"></span>
+          <span style="background:#f0d49a"></span>
+        </div>
+        <h3>灯笼的暖黄</h3>
+        <p class="tone-names">暖黄 · 淡黄</p>
+        <p class="line">挂在门口。白天也亮着。</p>
+      </li>
+
+      <li class="tone-item">
+        <div class="tones" aria-hidden="true">
+          <span style="background:#9a7bc2"></span>
+          <span style="background:#6d9ed6"></span>
+        </div>
+        <h3>天暗下去之前</h3>
+        <p class="tone-names">紫 · 蓝</p>
+        <p class="line">先紫一下。然后才是黑。</p>
+      </li>
+    </ul>
+
+    <p class="page-note">颜色比话活得久一点。放在这里，慢慢看就好。</p>
+  </section>
+
+  <footer>铃忆</footer>
+
+</main>
+</body>
+</html>
