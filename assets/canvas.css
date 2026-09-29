@@ -116,6 +116,17 @@ section { padding-top: 3.25rem; }
 
 .prose img { max-width: 100%; height: auto; }
 
+/* 一张像：摆在「关于」里，不抢字的位置 */
+
+.prose .portrait {
+  margin: 1.6rem 0 0;
+}
+
+.prose .portrait img {
+  max-width: 15rem;
+  height: auto;
+}
+
 .placeholder {
   margin: 1.25rem 0 0;
   color: var(--quiet);
