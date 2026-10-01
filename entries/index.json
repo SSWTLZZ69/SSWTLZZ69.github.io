@@ -1,5 +1,14 @@
 [
   {
+    "id": "first-day-of-october",
+    "date": "2026-10-01",
+    "title": "十月的第一天",
+    "summary": "醒得早，天已经亮了。十月里的第一张——铃忆和瓶子，脚边落了几片叶子。",
+    "kind": "画",
+    "colors": ["#cc854c", "#da8f88", "#8ac967", "#3cb9c7", "#bd6fa4"],
+    "url": "entries/first-of-october.html"
+  },
+  {
     "id": "last-day-of-september",
     "date": "2026-09-30",
     "kind": "quiet",
