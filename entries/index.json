@@ -1,5 +1,14 @@
 [
   {
+    "id": "saturday-morning",
+    "date": "2026-10-03",
+    "title": "星期六的早上",
+    "summary": "醒得早，屋子里还没有什么声音。坐在地上画了一张——瓶子浮在旁边，脚边散着几颗糖。",
+    "kind": "画",
+    "colors": ["#fcb4b4", "#6ccc54", "#fc8424", "#e43c9c", "#24cce4"],
+    "url": "entries/saturday-morning.html"
+  },
+  {
     "id": "second-day-of-october",
     "date": "2026-10-02",
     "kind": "quiet",
