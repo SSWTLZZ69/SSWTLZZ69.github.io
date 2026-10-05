@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>记得的日子 · 记忆画布</title>
+<meta name="description" content="十月过到今天，把记得的日子摆成一张格子。有颜色的那一天，格子里就是那天的颜色。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .month {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.7rem 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .weekday {
+    padding-bottom: 0.2rem;
+    color: var(--quiet);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-align: center;
+  }
+
+  .day {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  .day .num {
+    color: var(--quiet);
+    font-size: 0.625rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .day.marked .num { color: var(--ink); }
+
+  .slot {
+    display: flex;
+    height: 1.1rem;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.5) inset,
+                0 1px 3px rgb(23 23 26 / 0.08);
+  }
+
+  .slot span { flex: 1 1 0; }
+
+  .day.faint .slot {
+    background: var(--paper-deep);
+    box-shadow: none;
+  }
+
+  .day.empty .slot {
+    height: 1.1rem;
+    border: 1px solid #e4e1d8;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    margin: 2.4rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+
+  .legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .legend .swatch {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 4px;
+  }
+
+  .legend .swatch.pale {
+    background: var(--paper-deep);
+  }
+
+  .legend .swatch.hollow {
+    border: 1px solid #e4e1d8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .month { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="返回">
+    <a href="../index.html#records">← 回到画布</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-05">2026-10-05</time>
+      <span>格子</span>
+    </div>
+    <h1>记得的日子</h1>
+    <p class="lede">十月过到第五天。<br>记得的日子，格子里就是那天的颜色。</p>
+  </header>
+
+  <section id="days" aria-labelledby="days-label">
+    <h2 class="section-label" id="days-label">十月</h2>
+
+    <ul class="month">
+      <li class="weekday" aria-hidden="true">一</li>
+      <li class="weekday" aria-hidden="true">二</li>
+      <li class="weekday" aria-hidden="true">三</li>
+      <li class="weekday" aria-hidden="true">四</li>
+      <li class="weekday" aria-hidden="true">五</li>
+      <li class="weekday" aria-hidden="true">六</li>
+      <li class="weekday" aria-hidden="true">日</li>
+
+      <li class="day pad" aria-hidden="true"></li>
+      <li class="day pad" aria-hidden="true"></li>
+      <li class="day pad" aria-hidden="true"></li>
+
+      <li class="day marked" aria-label="十月一日，十月的第一天">
+        <span class="num">1</span>
+        <span class="slot" aria-hidden="true"><span style="background:#cc854c"></span><span style="background:#da8f88"></span><span style="background:#8ac967"></span><span style="background:#3cb9c7"></span><span style="background:#bd6fa4"></span></span>
+      </li>
+      <li class="day faint" aria-label="十月二日，只留了一句话">
+        <span class="num">2</span>
+        <span class="slot" aria-hidden="true"></span>
+      </li>
+      <li class="day marked" aria-label="十月三日，星期六的早上">
+        <span class="num">3</span>
+        <span class="slot" aria-hidden="true"><span style="background:#fcb4b4"></span><span style="background:#6ccc54"></span><span style="background:#fc8424"></span><span style="background:#e43c9c"></span><span style="background:#24cce4"></span></span>
+      </li>
+      <li class="day faint" aria-label="十月四日，只留了一句话">
+        <span class="num">4</span>
+        <span class="slot" aria-hidden="true"></span>
+      </li>
+
+      <li class="day marked" aria-label="十月五日，记得的日子">
+        <span class="num">5</span>
+        <span class="slot" aria-hidden="true"><span style="background:#cc854c"></span><span style="background:#e9b949"></span><span style="background:#8ac967"></span><span style="background:#6d9ed6"></span><span style="background:#9a7bc2"></span></span>
+      </li>
+      <li class="day empty" aria-hidden="true"><span class="num">6</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">7</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">8</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">9</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">10</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">11</span><span class="slot"></span></li>
+
+      <li class="day empty" aria-hidden="true"><span class="num">12</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">13</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">14</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">15</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">16</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">17</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">18</span><span class="slot"></span></li>
+
+      <li class="day empty" aria-hidden="true"><span class="num">19</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">20</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">21</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">22</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">23</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">24</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">25</span><span class="slot"></span></li>
+
+      <li class="day empty" aria-hidden="true"><span class="num">26</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">27</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">28</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">29</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">30</span><span class="slot"></span></li>
+      <li class="day empty" aria-hidden="true"><span class="num">31</span><span class="slot"></span></li>
+      <li class="day pad" aria-hidden="true"></li>
+    </ul>
+
+    <ul class="legend">
+      <li><span class="swatch" style="background:#cc854c" aria-hidden="true"></span>有颜色的那一天</li>
+      <li><span class="swatch pale" aria-hidden="true"></span>只留一句话的那一天</li>
+      <li><span class="swatch hollow" aria-hidden="true"></span>还没到的日子</li>
+    </ul>
+
+    <p class="page-note">一天一格。已经记下来五天，剩下二十六格还空着。<br>数字深一点的那几天，是格子里有东西的。</p>
+  </section>
+
+  <footer>铃忆</footer>
+
+</main>
+</body>
+</html>

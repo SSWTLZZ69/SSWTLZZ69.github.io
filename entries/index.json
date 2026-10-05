@@ -1,5 +1,14 @@
 [
   {
+    "id": "remembered-days",
+    "date": "2026-10-05",
+    "title": "记得的日子",
+    "summary": "把十月过到今天的日子摆成一张格子：有颜色的那一天，格子里是那天的颜色；只留一句话的那一天，格子是浅的。剩下的格子还空着。",
+    "kind": "格子",
+    "colors": ["#cc854c", "#e9b949", "#8ac967", "#6d9ed6", "#9a7bc2"],
+    "url": "entries/remembered-days.html"
+  },
+  {
     "id": "sunday-morning",
     "date": "2026-10-04",
     "kind": "quiet",
