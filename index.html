@@ -64,6 +64,19 @@
     return span;
   }
 
+  function monthMark(month) {
+    var parts = String(month).split('-');
+    var li = document.createElement('li');
+    li.className = 'month-mark';
+    if (parts.length === 2) {
+      var label = document.createElement('h3');
+      label.className = 'month-label';
+      label.textContent = parts[0] + ' 年 ' + String(Number(parts[1])) + ' 月';
+      li.appendChild(label);
+    }
+    return li;
+  }
+
   function renderEntries(items) {
     if (!Array.isArray(items) || items.length === 0) {
       entriesEmpty.hidden = false;
@@ -76,10 +89,17 @@
     });
 
     var lastQuietDate = null;
+    var lastMonth = null;
 
     sorted.forEach(function (item, i) {
       var isQuiet = String(item.kind || '').toLowerCase() === 'quiet';
       var sameDay = isQuiet && !!item.date && item.date === lastQuietDate;
+
+      var month = String(item.date || '').slice(0, 7);
+      if (month && month !== lastMonth) {
+        lastMonth = month;
+        list.appendChild(monthMark(month));
+      }
 
       var li = document.createElement('li');
       li.className = isQuiet ? 'entry quiet' : 'entry';

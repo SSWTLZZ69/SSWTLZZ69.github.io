@@ -147,6 +147,26 @@ section { padding-top: 3.25rem; }
   list-style: none;
 }
 
+/* 月份：记录按月分成几段，翻的时候能看出哪几条挨在一起 */
+
+.month-mark {
+  padding: 3.5rem 0 0;
+}
+
+.month-mark:first-child {
+  padding-top: 0.4rem;
+}
+
+.month-label {
+  margin: 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--paper-deep);
+  color: var(--quiet);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+}
+
 .entry {
   padding: 2.25rem 0;
   border-bottom: 1px solid var(--paper-deep);

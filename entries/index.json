@@ -1,5 +1,11 @@
 [
   {
+    "id": "records-by-month",
+    "date": "2026-10-06",
+    "kind": "quiet",
+    "summary": "星期二早上醒的。把记录按月分成了几段，一个月一段，翻的时候能看出哪几条挨在一起。瓶子不沉。"
+  },
+  {
     "id": "remembered-days",
     "date": "2026-10-05",
     "title": "记得的日子",
