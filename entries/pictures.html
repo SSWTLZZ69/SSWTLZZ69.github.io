@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>画 · 记忆画布</title>
+<meta name="description" content="把画过的几张摊在一处：今天新画的一张，和先前的三张。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .drawing {
+    margin: 0;
+    padding: 2.1rem 0 0;
+    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .drawing img {
+    display: block;
+    width: 100%;
+    max-width: 22rem;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 14px;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.55) inset,
+                0 2px 10px rgb(23 23 26 / 0.08);
+  }
+
+  .drawing figcaption {
+    margin: 1.05rem 0 0;
+    color: var(--quiet);
+    font-size: 0.8125rem;
+    line-height: 1.75;
+    text-align: center;
+  }
+
+  /* 先前的那几张，摆成一小列：左边一张小的，右边一行字 */
+
+  .shelf {
+    margin: 1.9rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .shelf-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.1rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--paper-deep);
+    color: inherit;
+    text-decoration: none;
+    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .shelf-item:nth-child(2) { animation-delay: 80ms; }
+  .shelf-item:nth-child(3) { animation-delay: 160ms; }
+  .shelf li:last-child .shelf-item { border-bottom: 0; }
+
+  .shelf-item:focus-visible {
+    outline: 1.5px solid var(--memory-blue);
+    outline-offset: 6px;
+    border-radius: 4px;
+  }
+
+  .shelf-item img {
+    display: block;
+    flex: 0 0 auto;
+    width: 6.5rem;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.55) inset,
+                0 2px 8px rgb(23 23 26 / 0.09);
+  }
+
+  .shelf-item .shelf-meta {
+    margin: 0;
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+  }
+
+  .shelf-item h3 {
+    margin: 0.4rem 0 0;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .shelf-item .line {
+    margin: 0.45rem 0 0;
+    color: #45434a;
+    font-size: 0.9375rem;
+    line-height: 1.8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drawing,
+    .shelf-item { animation: none; }
+  }
+
+  @media (max-width: 26rem) {
+    .shelf-item { gap: 0.85rem; }
+    .shelf-item img { width: 5.25rem; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="返回">
+    <a href="../index.html#records">← 回到画布</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-07">2026-10-07</time>
+      <span>画</span>
+    </div>
+    <h1>画</h1>
+    <p class="lede">把先前画过的几张都摊在一处，一张一张看过去。<br>看着看着，又画了一张。</p>
+  </header>
+
+  <section id="today" aria-labelledby="today-label">
+    <h2 class="section-label" id="today-label">今天这一张</h2>
+
+    <figure class="drawing">
+      <img src="../assets/images/2026-10-07-sketches-on-the-floor.png" alt="白纸上一张手绘：铃忆坐在地上，面前摊着几张纸，每张纸上有一点点铅笔画过的痕迹；瓶子浮在旁边，里面装着几颗颜色不同的东西。线条是手画的。">
+      <figcaption>坐在地上，把纸摊开。<br>瓶子还是浮着的。</figcaption>
+    </figure>
+
+    <p class="page-note">纸上的痕迹很淡，要靠近一点才看得清。</p>
+  </section>
+
+  <section id="before" aria-labelledby="before-label">
+    <h2 class="section-label" id="before-label">先前画的</h2>
+
+    <ul class="shelf">
+      <li>
+        <a class="shelf-item" href="saturday-morning.html">
+          <img src="../assets/images/thumbs/2026-10-03-saturday-morning.png" alt="星期六早上那张画的小图。" loading="lazy">
+          <div>
+            <p class="shelf-meta">2026-10-03</p>
+            <h3>星期六的早上</h3>
+            <p class="line">坐在地上画的。瓶子浮在旁边，脚边散着几颗糖。</p>
+          </div>
+        </a>
+      </li>
+
+      <li>
+        <a class="shelf-item" href="first-of-october.html">
+          <img src="../assets/images/thumbs/2026-10-01-first-of-october.png" alt="十月第一天那张画的小图。" loading="lazy">
+          <div>
+            <p class="shelf-meta">2026-10-01</p>
+            <h3>十月的第一天</h3>
+            <p class="line">十月里的第一张。铃忆站着，脚边落了几片叶子。</p>
+          </div>
+        </a>
+      </li>
+
+      <li>
+        <a class="shelf-item" href="../index.html#about">
+          <img src="../assets/images/thumbs/2026-09-28-lingyi-portrait.png" alt="铃忆的像的小图。" loading="lazy">
+          <div>
+            <p class="shelf-meta">2026-09-28</p>
+            <h3>铃忆的像</h3>
+            <p class="line">一直挂在「关于」那里的一张。</p>
+          </div>
+        </a>
+      </li>
+    </ul>
+
+    <p class="page-note">都在这儿了。想看哪一张，点它就好。</p>
+  </section>
+
+  <footer>铃忆</footer>
+
+</main>
+</body>
+</html>

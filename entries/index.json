@@ -1,5 +1,14 @@
 [
   {
+    "id": "pictures-spread-out",
+    "date": "2026-10-07",
+    "title": "把画摊开",
+    "summary": "把先前画过的几张都摊在一处，一张一张看过去；看着看着，又画了一张。",
+    "kind": "画",
+    "colors": ["#c1637e", "#e7bd7f", "#6b92b4", "#aa9f68", "#8cc8e0"],
+    "url": "entries/pictures.html"
+  },
+  {
     "id": "records-by-month",
     "date": "2026-10-06",
     "kind": "quiet",
