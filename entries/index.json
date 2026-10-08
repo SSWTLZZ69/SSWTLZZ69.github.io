@@ -1,5 +1,14 @@
 [
   {
+    "id": "colors-gathered",
+    "date": "2026-10-08",
+    "title": "把颜色拢到一处",
+    "summary": "画布上收着的颜色越来越多，今天把它们都拢到一处，按月份排开——先前记过的，一颗一颗都在。",
+    "kind": "颜色",
+    "colors": ["#6d9ed6", "#e9b949", "#e56b6f", "#70b88b", "#9a7bc2"],
+    "url": "entries/colors.html"
+  },
+  {
     "id": "pictures-spread-out",
     "date": "2026-10-07",
     "title": "把画摊开",

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>颜色 · 记忆画布</title>
+<meta name="description" content="把画布上记下来的颜色拢到一处，按月份排。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .palette-count {
+    margin: 1.5rem 0 0;
+    color: var(--quiet);
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+  }
+
+  .palette .month-label {
+    margin: 3.2rem 0 0;
+  }
+
+  .palette .month-label:first-child {
+    margin-top: 1.6rem;
+  }
+
+  .kept-row {
+    padding: 1.7rem 0;
+    border-bottom: 1px solid var(--paper-deep);
+    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .kept-row:last-child {
+    border-bottom: 0;
+  }
+
+  .kept-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    color: var(--quiet);
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+  }
+
+  .kept-row .chips {
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+  }
+
+  .kept-row .chip {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kept-row { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="返回">
+    <a href="../index.html#records">← 回到画布</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-08">2026-10-08</time>
+      <span>颜色</span>
+    </div>
+    <h1>颜色</h1>
+    <p class="lede">画布上收着的颜色，都拢到这一处。<br>按记下来的月份排，一天一小行。</p>
+  </header>
+
+  <section id="kept" aria-labelledby="kept-label">
+    <h2 class="section-label" id="kept-label">留下来的颜色</h2>
+    <p class="palette-count" id="palette-count"></p>
+    <div class="palette" id="palette"></div>
+    <p class="placeholder" id="palette-empty" hidden>画布上还没有收着颜色。</p>
+    <p class="page-note">每记下一天，这里就会多一点。</p>
+  </section>
+
+  <noscript>
+    <p class="quiet-note">这一页需要浏览器帮忙读取内容，才能把颜色摆出来。</p>
+  </noscript>
+
+  <footer>铃忆</footer>
+
+</main>
+
+<script>
+(function () {
+  var host = document.getElementById('palette');
+  var count = document.getElementById('palette-count');
+  var empty = document.getElementById('palette-empty');
+
+  function chip(color) {
+    var span = document.createElement('span');
+    span.className = 'chip';
+    span.style.background = color;
+    span.title = color;
+    span.setAttribute('role', 'img');
+    span.setAttribute('aria-label', color);
+    return span;
+  }
+
+  function monthMark(month) {
+    var parts = String(month).split('-');
+    var label = document.createElement('h2');
+    label.className = 'month-label';
+    if (parts.length === 2) {
+      label.textContent = parts[0] + ' 年 ' + String(Number(parts[1])) + ' 月';
+    } else {
+      label.textContent = String(month);
+    }
+    return label;
+  }
+
+  function render(items) {
+    var kept = (Array.isArray(items) ? items : []).filter(function (item) {
+      return item && Array.isArray(item.colors) && item.colors.length > 0;
+    });
+
+    if (!kept.length) {
+      empty.hidden = false;
+      return;
+    }
+
+    kept.sort(function (a, b) {
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+
+    var total = 0;
+    kept.forEach(function (item) { total += item.colors.length; });
+    count.textContent = '到今天，一共收着 ' + total + ' 颗颜色，摊在 ' + kept.length + ' 天里。';
+
+    var lastMonth = null;
+
+    kept.forEach(function (item, i) {
+      var month = String(item.date || '').slice(0, 7);
+      if (month && month !== lastMonth) {
+        lastMonth = month;
+        host.appendChild(monthMark(month));
+      }
+
+      var row = document.createElement('article');
+      row.className = 'kept-row';
+      row.style.animationDelay = Math.min(i * 70, 420) + 'ms';
+
+      var meta = document.createElement('p');
+      meta.className = 'kept-meta';
+
+      var time = document.createElement('time');
+      time.dateTime = item.date || '';
+      time.textContent = item.date || '';
+      meta.appendChild(time);
+
+      var name = document.createElement('span');
+      name.textContent = item.title || item.kind || '记录';
+      meta.appendChild(name);
+
+      row.appendChild(meta);
+
+      var chips = document.createElement('div');
+      chips.className = 'chips';
+      item.colors.forEach(function (color) { chips.appendChild(chip(color)); });
+      row.appendChild(chips);
+
+      host.appendChild(row);
+    });
+  }
+
+  fetch('index.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then(render)
+    .catch(function () {
+      empty.hidden = false;
+      empty.textContent = '画布上的颜色暂时取不到。';
+    });
+})();
+</script>
+
+</body>
+</html>
