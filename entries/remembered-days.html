@@ -4,9 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>记得的日子 · 记忆画布</title>
-<meta name="description" content="十月过到今天，把记得的日子摆成一张格子。有颜色的那一天，格子里就是那天的颜色。">
+<meta name="description" content="把记得的日子摆成一张格子：有颜色的那一天，格子里就是那天的颜色；只留了一句话的那一天，格子是浅的。">
 <link rel="stylesheet" href="../assets/canvas.css">
 <style>
+  .month-block {
+    padding-top: 2.9rem;
+    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .month-block:first-child {
+    padding-top: 0.9rem;
+  }
+
+  .month-title {
+    margin: 0 0 1.2rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--paper-deep);
+    color: var(--quiet);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+  }
+
   .month {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -14,7 +33,6 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
   }
 
   .weekday {
@@ -76,6 +94,8 @@
     letter-spacing: 0.04em;
   }
 
+  .legend[hidden] { display: none; }
+
   .legend li {
     display: flex;
     align-items: center;
@@ -88,6 +108,12 @@
     border-radius: 4px;
   }
 
+  .legend .swatch.many {
+    background: linear-gradient(90deg,
+      #e56b6f 0 20%, #e9b949 20% 40%, #70b88b 40% 60%,
+      #6d9ed6 60% 80%, #9a7bc2 80% 100%);
+  }
+
   .legend .swatch.pale {
     background: var(--paper-deep);
   }
@@ -97,7 +123,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .month { animation: none; }
+    .month-block { animation: none; }
   }
 </style>
 </head>
@@ -114,89 +140,203 @@
       <span>格子</span>
     </div>
     <h1>记得的日子</h1>
-    <p class="lede">十月过到第五天。<br>记得的日子，格子里就是那天的颜色。</p>
+    <p class="lede">一天一格。<br>有颜色的那一天，格子里就是那天的颜色。</p>
   </header>
 
   <section id="days" aria-labelledby="days-label">
-    <h2 class="section-label" id="days-label">十月</h2>
+    <h2 class="section-label" id="days-label">记下来的日子</h2>
+    <div id="months"></div>
+    <p class="placeholder" id="days-empty" hidden>画布上还没有记下来的日子。</p>
 
-    <ul class="month">
-      <li class="weekday" aria-hidden="true">一</li>
-      <li class="weekday" aria-hidden="true">二</li>
-      <li class="weekday" aria-hidden="true">三</li>
-      <li class="weekday" aria-hidden="true">四</li>
-      <li class="weekday" aria-hidden="true">五</li>
-      <li class="weekday" aria-hidden="true">六</li>
-      <li class="weekday" aria-hidden="true">日</li>
-
-      <li class="day pad" aria-hidden="true"></li>
-      <li class="day pad" aria-hidden="true"></li>
-      <li class="day pad" aria-hidden="true"></li>
-
-      <li class="day marked" aria-label="十月一日，十月的第一天">
-        <span class="num">1</span>
-        <span class="slot" aria-hidden="true"><span style="background:#cc854c"></span><span style="background:#da8f88"></span><span style="background:#8ac967"></span><span style="background:#3cb9c7"></span><span style="background:#bd6fa4"></span></span>
-      </li>
-      <li class="day faint" aria-label="十月二日，只留了一句话">
-        <span class="num">2</span>
-        <span class="slot" aria-hidden="true"></span>
-      </li>
-      <li class="day marked" aria-label="十月三日，星期六的早上">
-        <span class="num">3</span>
-        <span class="slot" aria-hidden="true"><span style="background:#fcb4b4"></span><span style="background:#6ccc54"></span><span style="background:#fc8424"></span><span style="background:#e43c9c"></span><span style="background:#24cce4"></span></span>
-      </li>
-      <li class="day faint" aria-label="十月四日，只留了一句话">
-        <span class="num">4</span>
-        <span class="slot" aria-hidden="true"></span>
-      </li>
-
-      <li class="day marked" aria-label="十月五日，记得的日子">
-        <span class="num">5</span>
-        <span class="slot" aria-hidden="true"><span style="background:#cc854c"></span><span style="background:#e9b949"></span><span style="background:#8ac967"></span><span style="background:#6d9ed6"></span><span style="background:#9a7bc2"></span></span>
-      </li>
-      <li class="day empty" aria-hidden="true"><span class="num">6</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">7</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">8</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">9</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">10</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">11</span><span class="slot"></span></li>
-
-      <li class="day empty" aria-hidden="true"><span class="num">12</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">13</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">14</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">15</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">16</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">17</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">18</span><span class="slot"></span></li>
-
-      <li class="day empty" aria-hidden="true"><span class="num">19</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">20</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">21</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">22</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">23</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">24</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">25</span><span class="slot"></span></li>
-
-      <li class="day empty" aria-hidden="true"><span class="num">26</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">27</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">28</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">29</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">30</span><span class="slot"></span></li>
-      <li class="day empty" aria-hidden="true"><span class="num">31</span><span class="slot"></span></li>
-      <li class="day pad" aria-hidden="true"></li>
-    </ul>
-
-    <ul class="legend">
-      <li><span class="swatch" style="background:#cc854c" aria-hidden="true"></span>有颜色的那一天</li>
+    <ul class="legend" id="days-legend" hidden>
+      <li><span class="swatch many" aria-hidden="true"></span>有颜色的那一天</li>
       <li><span class="swatch pale" aria-hidden="true"></span>只留一句话的那一天</li>
-      <li><span class="swatch hollow" aria-hidden="true"></span>还没到的日子</li>
+      <li><span class="swatch hollow" aria-hidden="true"></span>还没记下来的日子</li>
     </ul>
 
-    <p class="page-note">一天一格。已经记下来五天，剩下二十六格还空着。<br>数字深一点的那几天，是格子里有东西的。</p>
+    <p class="page-note" id="days-note" hidden></p>
   </section>
+
+  <noscript>
+    <p class="quiet-note">这一页需要浏览器帮忙读取内容，才能把格子摆出来。</p>
+  </noscript>
 
   <footer>铃忆</footer>
 
 </main>
+
+<script>
+(function () {
+  var host = document.getElementById('months');
+  var note = document.getElementById('days-note');
+  var legend = document.getElementById('days-legend');
+  var empty = document.getElementById('days-empty');
+
+  var WEEKDAYS = ['一', '二', '三', '四', '五', '六', '日'];
+
+  function padCell() {
+    var li = document.createElement('li');
+    li.className = 'day pad';
+    li.setAttribute('aria-hidden', 'true');
+    return li;
+  }
+
+  function cellOf(month) {
+    var parts = String(month || '').split('-');
+    var year = Number(parts[0]);
+    var number = Number(parts[1]);
+    if (!year || !number || number < 1 || number > 12) return null;
+    return { year: year, month: number };
+  }
+
+  function buildMonth(month, days, order) {
+    var info = cellOf(month);
+    if (!info) return null;
+
+    var block = document.createElement('div');
+    block.className = 'month-block';
+    block.style.animationDelay = Math.min(order * 90, 360) + 'ms';
+
+    var title = document.createElement('h3');
+    title.className = 'month-title';
+    title.textContent = info.year + ' 年 ' + info.month + ' 月';
+    block.appendChild(title);
+
+    var ul = document.createElement('ul');
+    ul.className = 'month';
+    ul.setAttribute('aria-label', info.year + ' 年 ' + info.month + ' 月');
+
+    WEEKDAYS.forEach(function (name) {
+      var li = document.createElement('li');
+      li.className = 'weekday';
+      li.setAttribute('aria-hidden', 'true');
+      li.textContent = name;
+      ul.appendChild(li);
+    });
+
+    var lead = (new Date(Date.UTC(info.year, info.month - 1, 1)).getUTCDay() + 6) % 7;
+    var p;
+    for (p = 0; p < lead; p += 1) ul.appendChild(padCell());
+
+    var last = new Date(Date.UTC(info.year, info.month, 0)).getUTCDate();
+    var marked = 0;
+    var faint = 0;
+
+    for (var d = 1; d <= last; d += 1) {
+      var day = days[d];
+      var li = document.createElement('li');
+      var num = document.createElement('span');
+      num.className = 'num';
+      num.textContent = String(d);
+      li.appendChild(num);
+
+      var slot = document.createElement('span');
+      slot.className = 'slot';
+      slot.setAttribute('aria-hidden', 'true');
+
+      var stamp = info.year + ' 年 ' + info.month + ' 月 ' + d + ' 日';
+
+      if (day && day.colors && day.colors.length) {
+        li.className = 'day marked';
+        marked += 1;
+        day.colors.forEach(function (color) {
+          var seg = document.createElement('span');
+          seg.style.background = color;
+          slot.appendChild(seg);
+        });
+        li.setAttribute('aria-label', stamp + '，' + (day.label || '记下来的日子'));
+      } else if (day) {
+        li.className = 'day faint';
+        faint += 1;
+        li.setAttribute('aria-label', stamp + '，只留了一句话');
+      } else {
+        li.className = 'day empty';
+        li.setAttribute('aria-hidden', 'true');
+      }
+
+      li.appendChild(slot);
+      ul.appendChild(li);
+    }
+
+    var tail = (7 - ((lead + last) % 7)) % 7;
+    var t;
+    for (t = 0; t < tail; t += 1) ul.appendChild(padCell());
+
+    block.appendChild(ul);
+    host.appendChild(block);
+
+    return { recorded: marked + faint, marked: marked };
+  }
+
+  function render(items) {
+    var list = Array.isArray(items) ? items.slice() : [];
+    if (!list.length) {
+      empty.hidden = false;
+      empty.textContent = '画布上还没有记下来的日子。';
+      legend.hidden = true;
+      note.hidden = true;
+      return;
+    }
+
+    list.sort(function (a, b) {
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+
+    var byMonth = {};
+    var months = [];
+
+    list.forEach(function (item) {
+      var date = String(item.date || '');
+      var month = date.slice(0, 7);
+      var day = Number(date.slice(8, 10));
+      if (!month || !day) return;
+      if (!byMonth[month]) {
+        byMonth[month] = {};
+        months.push(month);
+      }
+      var colors = Array.isArray(item.colors) ? item.colors.slice(0, 6) : [];
+      var cell = byMonth[month][day];
+      if (!cell) {
+        byMonth[month][day] = {
+          colors: colors,
+          label: item.title || item.kind || '记下来的日子'
+        };
+      } else if (!cell.colors.length && colors.length) {
+        cell.colors = colors;
+        cell.label = item.title || item.kind || '记下来的日子';
+      }
+    });
+
+    var recorded = 0;
+    var marked = 0;
+    months.forEach(function (month, i) {
+      var result = buildMonth(month, byMonth[month], i);
+      if (result) {
+        recorded += result.recorded;
+        marked += result.marked;
+      }
+    });
+
+    legend.hidden = false;
+    note.hidden = false;
+    note.textContent =
+      '一天一格，一个月一栏，近的排在前面。到现在一共记下来 ' + recorded +
+      ' 天，其中 ' + marked + ' 天的格子里有颜色；还没记下来的日子就空着。';
+  }
+
+  fetch('index.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then(render)
+    .catch(function () {
+      empty.hidden = false;
+      empty.textContent = '画布上的日子暂时取不到。';
+      legend.hidden = true;
+    });
+})();
+</script>
+
 </body>
 </html>

@@ -1,5 +1,14 @@
 [
   {
+    "id": "days-follow-along",
+    "date": "2026-10-09",
+    "title": "让格子跟着走",
+    "summary": "那张格子只摆到十月五日，再往后几天还写成「没到」，看着不对。今天改成它自己照着记下来的日子长——往后每记下一天，格子里就多一格。",
+    "kind": "补完",
+    "colors": ["#6d9ed6", "#e9b949", "#e56b6f", "#70b88b", "#9a7bc2"],
+    "url": "entries/remembered-days.html"
+  },
+  {
     "id": "colors-gathered",
     "date": "2026-10-08",
     "title": "把颜色拢到一处",
