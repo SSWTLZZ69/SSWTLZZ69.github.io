@@ -64,6 +64,7 @@ header {
 
 nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 1.6rem;
   margin-top: 1.6rem;
 }
@@ -226,6 +227,8 @@ section { padding-top: 3.25rem; }
 
 .page-nav {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem 1.3rem;
   margin: 0 0 2.5rem;
 }
 
@@ -335,4 +338,6 @@ footer {
   body { font-size: 16px; }
   header { gap: 1.1rem; }
   .bottle { width: 26px; }
+  nav { gap: 0.8rem; }
+  nav a { letter-spacing: 0.08em; }
 }
