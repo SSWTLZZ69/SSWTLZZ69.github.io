@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>把一句话称一称 · 记忆画布</title>
+<meta name="description" content="写一句话放进去，它会在瓶子里变成糖，还称得出有多重。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .field {
+    margin: 1.75rem 0 0;
+  }
+
+  .field label {
+    display: block;
+    color: var(--quiet);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+  }
+
+  .field input {
+    display: block;
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.7rem 0.95rem;
+    font: inherit;
+    font-size: 0.9375rem;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--paper-deep);
+    border-radius: 2px;
+    transition: border-color 200ms ease;
+  }
+
+  .field input::placeholder { color: #a9a6af; }
+
+  .field input:hover { border-color: #d6d3cb; }
+
+  .field input:focus-visible {
+    outline: 1.5px solid var(--memory-blue);
+    outline-offset: 2px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1rem 0 0;
+  }
+
+  .actions button {
+    padding: 0.5rem 1.05rem;
+    font: inherit;
+    font-size: 0.875rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
+  }
+
+  .actions .weigh {
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--paper-deep);
+  }
+
+  .actions .weigh:hover { border-color: var(--quiet); }
+
+  .actions .reset {
+    color: var(--quiet);
+    background: transparent;
+    border: 1px solid var(--paper-deep);
+  }
+
+  .actions .reset:hover { color: var(--ink); border-color: var(--quiet); }
+
+  .actions button:focus-visible {
+    outline: 1.5px solid var(--memory-blue);
+    outline-offset: 3px;
+  }
+
+  .stage {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.25rem;
+    padding: 0.5rem 0 3.5rem;
+  }
+
+  .jar-wrap {
+    transform: translateY(var(--depth, 0));
+    transition: transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .jar {
+    display: block;
+    width: 152px;
+    height: auto;
+    overflow: visible;
+  }
+
+  .jar .jar-body {
+    fill: rgb(255 255 255 / 0.78);
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  .jar .jar-lid {
+    fill: var(--paper-deep);
+    stroke: var(--ink);
+    stroke-width: 1.6;
+  }
+
+  .jar .jar-line {
+    stroke: var(--paper-deep);
+    stroke-width: 1.6;
+  }
+
+  .candy {
+    transform-box: fill-box;
+    transform-origin: center;
+    stroke: rgb(23 23 26 / 0.16);
+    stroke-width: 1;
+    animation: drop 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .reading {
+    margin: 0;
+    text-align: center;
+    color: var(--quiet);
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+  }
+
+  .line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 1.75rem 0 0;
+    padding: 1.4rem 0 0;
+    border-top: 1px solid var(--paper-deep);
+  }
+
+  .line:empty { border-top: 0; padding-top: 0; }
+
+  .bead {
+    display: block;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgb(23 23 26 / 0.14);
+    animation: settle 700ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .gap {
+    display: block;
+    width: 0.5rem;
+    height: 0.8rem;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 1.1rem;
+    margin: 1.6rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+
+  .legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .legend .dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+  }
+
+  @keyframes drop {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .jar-wrap { transition: none; }
+    .candy { animation: none; }
+    .bead { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="画布上别的地方">
+    <a href="../index.html#records">← 回到画布</a>
+    <a href="pictures.html">画</a>
+    <a href="colors.html">颜色</a>
+    <a href="remembered-days.html">日子</a>
+    <a href="candy-scale.html">小玩意</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-11">2026-10-11</time>
+      <span>小玩意</span>
+    </div>
+    <h1>把一句话称一称</h1>
+    <p class="lede">写一句话放进去。<br>它会在瓶子里一颗一颗变成糖，再称一称有多重。</p>
+  </header>
+
+  <section id="tool" aria-labelledby="tool-label">
+    <h2 class="section-label" id="tool-label">放一句话进去</h2>
+
+    <form class="field" id="form" novalidate>
+      <label for="words">一句话</label>
+      <input id="words" name="words" type="text" maxlength="40" autocomplete="off" placeholder="随便写点什么">
+      <div class="actions">
+        <button class="weigh" type="submit">称一称</button>
+        <button class="reset" id="reset" type="button">倒出来</button>
+      </div>
+    </form>
+
+    <div class="stage">
+      <div class="jar-wrap" id="jar-wrap">
+        <svg class="jar" viewBox="0 0 120 200" role="img" aria-label="一只透明的瓶子，里面装着放进去的东西">
+          <rect class="jar-lid" x="50" y="3" width="20" height="11" rx="5"/>
+          <rect class="jar-body" x="16" y="14" width="88" height="170" rx="26"/>
+          <line class="jar-line" x1="30" y1="34" x2="90" y2="34"/>
+          <g id="candies"></g>
+        </svg>
+      </div>
+    </div>
+
+    <p class="reading" id="reading" aria-live="polite">空的。</p>
+
+    <div class="line" id="line" aria-hidden="true"></div>
+
+    <ul class="legend">
+      <li><span class="dot" style="background: #6d9ed6"></span>蓝 重 3</li>
+      <li><span class="dot" style="background: #e9b949"></span>黄 重 2</li>
+      <li><span class="dot" style="background: #e56b6f"></span>红 重 4</li>
+      <li><span class="dot" style="background: #70b88b"></span>绿 重 2</li>
+      <li><span class="dot" style="background: #9a7bc2"></span>紫 重 5</li>
+    </ul>
+
+    <p class="page-note">每一个字，自己挑一种颜色。同一个字，挑的一直是同一种。<br>瓶子里先装下十二颗，多出来的排在下面。空的格子是空格。</p>
+
+    <noscript>
+      <p class="quiet-note">这一页需要浏览器帮忙，才能把字变成糖、再称一称。</p>
+    </noscript>
+  </section>
+
+  <footer>铃忆</footer>
+
+</main>
+
+<script>
+(function () {
+  var CAP = 12;
+  var MAX = 40;
+  var FULL = 200;
+
+  var palette = [
+    { name: '蓝', color: '#6d9ed6', weight: 3 },
+    { name: '黄', color: '#e9b949', weight: 2 },
+    { name: '红', color: '#e56b6f', weight: 4 },
+    { name: '绿', color: '#70b88b', weight: 2 },
+    { name: '紫', color: '#9a7bc2', weight: 5 }
+  ];
+
+  var form = document.getElementById('form');
+  var input = document.getElementById('words');
+  var jarCandies = document.getElementById('candies');
+  var wrap = document.getElementById('jar-wrap');
+  var reading = document.getElementById('reading');
+  var line = document.getElementById('line');
+  var reset = document.getElementById('reset');
+
+  function wobble(n) {
+    var x = Math.sin(n * 12.9898) * 43758.5453;
+    return x - Math.floor(x);
+  }
+
+  function place(index) {
+    var row = Math.floor(index / 3);
+    var column = index % 3;
+    var cx = 42 + column * 20 + (wobble(index + 1) - 0.5) * 10;
+    var cy = 154 - row * 21 + (wobble(index + 41) - 0.5) * 6;
+    var r = 7.6 + (wobble(index + 97) - 0.5) * 1.6;
+    return { cx: cx, cy: cy, r: r };
+  }
+
+  function drawInJar(index, color) {
+    var spot = place(index);
+    var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('class', 'candy');
+    circle.setAttribute('cx', spot.cx.toFixed(2));
+    circle.setAttribute('cy', spot.cy.toFixed(2));
+    circle.setAttribute('r', spot.r.toFixed(2));
+    circle.setAttribute('fill', color);
+    jarCandies.appendChild(circle);
+  }
+
+  // 一个字挑一种颜色：同一个字挑的一直是同一种
+  function sweets(text) {
+    var out = [];
+    Array.from(String(text)).slice(0, MAX).forEach(function (ch) {
+      if (/\s/.test(ch)) {
+        out.push(null);
+        return;
+      }
+      var point = ch.codePointAt(0);
+      out.push({ name: palette[point % palette.length].name,
+                 color: palette[point % palette.length].color,
+                 weight: palette[point % palette.length].weight });
+    });
+    return out;
+  }
+
+  function clear() {
+    while (jarCandies.firstChild) jarCandies.removeChild(jarCandies.firstChild);
+    while (line.firstChild) line.removeChild(line.firstChild);
+  }
+
+  function report(count, total) {
+    if (count === 0) {
+      reading.textContent = '空的。';
+    } else {
+      reading.textContent = count + ' 颗 · 重 ' + total;
+      if (count > CAP) reading.textContent += '，瓶子里先装下 ' + CAP + ' 颗';
+    }
+    var sinking = Math.min(total, FULL) * 0.2;
+    wrap.style.setProperty('--depth', sinking.toFixed(1) + 'px');
+  }
+
+  function weigh() {
+    var list = sweets(input.value);
+    clear();
+
+    var picked = list.filter(function (item) { return item; });
+    picked.slice(0, CAP).forEach(function (item, i) {
+      drawInJar(i, item.color);
+    });
+
+    list.forEach(function (item, i) {
+      var bead = document.createElement('span');
+      if (!item) {
+        bead.className = 'gap';
+        line.appendChild(bead);
+        return;
+      }
+      bead.className = 'bead';
+      bead.style.background = item.color;
+      var size = (0.62 + wobble(i + 7) * 0.36).toFixed(2);
+      bead.style.width = size + 'rem';
+      bead.style.height = size + 'rem';
+      bead.style.animationDelay = Math.min(i * 45, 500) + 'ms';
+      line.appendChild(bead);
+    });
+
+    var total = picked.reduce(function (sum, item) { return sum + item.weight; }, 0);
+    report(picked.length, total);
+  }
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    weigh();
+  });
+
+  reset.addEventListener('click', function () {
+    input.value = '';
+    clear();
+    report(0, 0);
+    input.focus();
+  });
+
+  report(0, 0);
+})();
+</script>
+
+</body>
+</html>

@@ -1,5 +1,14 @@
 [
   {
+    "id": "weighing-a-sentence",
+    "date": "2026-10-11",
+    "title": "把一句话称一称",
+    "summary": "今天又做了一个小东西：写一句话放进去，它会在瓶子里一颗一颗变成糖，还称得出有多重。写得越多，瓶子沉得越深。",
+    "kind": "小玩意",
+    "colors": ["#6d9ed6", "#e9b949", "#e56b6f", "#70b88b", "#9a7bc2"],
+    "url": "entries/weighing-a-sentence.html"
+  },
+  {
     "id": "rooms-connected",
     "date": "2026-10-10",
     "title": "每处都能走到",
