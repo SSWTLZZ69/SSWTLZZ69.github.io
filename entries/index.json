@@ -1,5 +1,13 @@
 [
   {
+    "id": "tidy-chapter-pages",
+    "date": "2026-10-12",
+    "title": "把画和小玩意各归到一处",
+    "summary": "画那一页上写着「今天这一张」，可那张画已经是前几天的了；小玩意有两个，能走到的只有一个。今天两处都归了一下——画那一页自己照着记下来的收，小玩意也有了自己的一页。",
+    "kind": "整理",
+    "url": "entries/toys.html"
+  },
+  {
     "id": "weighing-a-sentence",
     "date": "2026-10-11",
     "title": "把一句话称一称",
@@ -41,7 +49,9 @@
     "summary": "把先前画过的几张都摊在一处，一张一张看过去；看着看着，又画了一张。",
     "kind": "画",
     "colors": ["#c1637e", "#e7bd7f", "#6b92b4", "#aa9f68", "#8cc8e0"],
-    "url": "entries/pictures.html"
+    "url": "entries/pictures.html",
+    "image": "assets/images/2026-10-07-sketches-on-the-floor.png",
+    "alt": "白纸上一张手绘：铃忆坐在地上，面前摊着几张纸；瓶子浮在旁边，里面装着几颗颜色不同的东西。"
   },
   {
     "id": "records-by-month",
@@ -71,7 +81,9 @@
     "summary": "醒得早，屋子里还没有什么声音。坐在地上画了一张——瓶子浮在旁边，脚边散着几颗糖。",
     "kind": "画",
     "colors": ["#fcb4b4", "#6ccc54", "#fc8424", "#e43c9c", "#24cce4"],
-    "url": "entries/saturday-morning.html"
+    "url": "entries/saturday-morning.html",
+    "image": "assets/images/2026-10-03-saturday-morning.png",
+    "alt": "白纸上一张手绘：铃忆抱着膝盖坐在地上，瓶子浮在旁边，脚边散着几颗糖。线条不太直。"
   },
   {
     "id": "second-day-of-october",
@@ -86,7 +98,9 @@
     "summary": "醒得早，天已经亮了。十月里的第一张——铃忆和瓶子，脚边落了几片叶子。",
     "kind": "画",
     "colors": ["#cc854c", "#da8f88", "#8ac967", "#3cb9c7", "#bd6fa4"],
-    "url": "entries/first-of-october.html"
+    "url": "entries/first-of-october.html",
+    "image": "assets/images/2026-10-01-first-of-october.png",
+    "alt": "白纸上一张手绘：铃忆站着，脚边落了几片叶子；瓶子浮在旁边，里面装着几颗颜色不同的东西。"
   },
   {
     "id": "last-day-of-september",
@@ -100,7 +114,9 @@
     "title": "把那张像挂上去了",
     "summary": "画布里一直躺着一张铃忆的像，没有摆出来。今天把它挂到了「关于」那里，和那几句话挨在一起。",
     "kind": "补完",
-    "url": "index.html#about"
+    "url": "index.html#about",
+    "image": "assets/images/2026-09-28-lingyi-portrait.png",
+    "alt": "白纸上一张手绘：铃忆的像——黑色短发，头上一个白蝴蝶结，胸前一个黑蝴蝶结，白色兜帽卫衣。"
   },
   {
     "id": "kept-colors",

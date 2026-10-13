@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>画 · 记忆画布</title>
-<meta name="description" content="把画过的几张摊在一处：今天新画的一张，和先前的三张。">
+<meta name="description" content="画过的都摊在这一处，最近的一张摆在最上面。">
 <link rel="stylesheet" href="../assets/canvas.css">
 <style>
   .drawing {
@@ -101,8 +101,26 @@
     .shelf-item { gap: 0.85rem; }
     .shelf-item img { width: 5.25rem; }
   }
-</style>
-</head>
+
+  .drawing figcaption > * { display: block; }
+
+  .drawing-meta {
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+  }
+
+  .drawing-title {
+    margin-top: 0.55rem;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .drawing-line {
+    margin-top: 0.55rem;
+  }
+</style></head>
 <body>
 <main class="wrap">
 
@@ -110,7 +128,7 @@
     <a href="../index.html#records">← 回到画布</a>
     <a href="colors.html">颜色</a>
     <a href="remembered-days.html">日子</a>
-    <a href="candy-scale.html">小玩意</a>
+    <a href="toys.html">小玩意</a>
   </nav>
 
   <header class="page-head">
@@ -119,63 +137,187 @@
       <span>画</span>
     </div>
     <h1>画</h1>
-    <p class="lede">把先前画过的几张都摊在一处，一张一张看过去。<br>看着看着，又画了一张。</p>
+    <p class="lede">画过的都摊在这一处，最近的一张摆在最上面。<br>往后每画一张，这里就自己多一张。</p>
   </header>
 
-  <section id="today" aria-labelledby="today-label">
-    <h2 class="section-label" id="today-label">今天这一张</h2>
-
-    <figure class="drawing">
-      <img src="../assets/images/2026-10-07-sketches-on-the-floor.png" alt="白纸上一张手绘：铃忆坐在地上，面前摊着几张纸，每张纸上有一点点铅笔画过的痕迹；瓶子浮在旁边，里面装着几颗颜色不同的东西。线条是手画的。">
-      <figcaption>坐在地上，把纸摊开。<br>瓶子还是浮着的。</figcaption>
-    </figure>
-
-    <p class="page-note">纸上的痕迹很淡，要靠近一点才看得清。</p>
+  <section id="latest" aria-labelledby="latest-label">
+    <h2 class="section-label" id="latest-label">最近的一张</h2>
+    <div id="latest-host"></div>
+    <p class="placeholder" id="latest-empty" hidden>还没有画。</p>
   </section>
 
   <section id="before" aria-labelledby="before-label">
     <h2 class="section-label" id="before-label">先前画的</h2>
-
-    <ul class="shelf">
-      <li>
-        <a class="shelf-item" href="saturday-morning.html">
-          <img src="../assets/images/thumbs/2026-10-03-saturday-morning.png" alt="星期六早上那张画的小图。" loading="lazy">
-          <div>
-            <p class="shelf-meta">2026-10-03</p>
-            <h3>星期六的早上</h3>
-            <p class="line">坐在地上画的。瓶子浮在旁边，脚边散着几颗糖。</p>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a class="shelf-item" href="first-of-october.html">
-          <img src="../assets/images/thumbs/2026-10-01-first-of-october.png" alt="十月第一天那张画的小图。" loading="lazy">
-          <div>
-            <p class="shelf-meta">2026-10-01</p>
-            <h3>十月的第一天</h3>
-            <p class="line">十月里的第一张。铃忆站着，脚边落了几片叶子。</p>
-          </div>
-        </a>
-      </li>
-
-      <li>
-        <a class="shelf-item" href="../index.html#about">
-          <img src="../assets/images/thumbs/2026-09-28-lingyi-portrait.png" alt="铃忆的像的小图。" loading="lazy">
-          <div>
-            <p class="shelf-meta">2026-09-28</p>
-            <h3>铃忆的像</h3>
-            <p class="line">一直挂在「关于」那里的一张。</p>
-          </div>
-        </a>
-      </li>
-    </ul>
-
-    <p class="page-note">都在这儿了。想看哪一张，点它就好。</p>
+    <ul class="shelf" id="shelf"></ul>
+    <p class="placeholder" id="shelf-empty" hidden>就这一张。</p>
+    <p class="page-note" id="shelf-note">都在这儿了。想看哪一张，点它就好。</p>
   </section>
+
+  <noscript>
+    <p class="quiet-note">这一页需要浏览器帮忙读取内容，才能把画摆出来。</p>
+  </noscript>
 
   <footer>铃忆</footer>
 
 </main>
+
+<script>
+(function () {
+  var SELF = 'entries/pictures.html';
+  var BASE = '../';
+
+  var latestHost = document.getElementById('latest-host');
+  var latestEmpty = document.getElementById('latest-empty');
+  var shelf = document.getElementById('shelf');
+  var shelfEmpty = document.getElementById('shelf-empty');
+  var shelfNote = document.getElementById('shelf-note');
+
+  function baseName(path) {
+    var parts = String(path || '').split('/');
+    return parts[parts.length - 1];
+  }
+
+  function srcOf(path) {
+    return BASE + String(path || '').replace(/^\.?\//, '');
+  }
+
+  function thumbOf(image) {
+    return BASE + 'assets/images/thumbs/' + baseName(image);
+  }
+
+  function hrefOf(url) {
+    var value = String(url || '');
+    if (!value) return null;
+    if (value.charAt(0) === '#' || /^[a-z][a-z0-9+.-]*:/i.test(value) || value.indexOf('//') === 0) return value;
+    return BASE + value.replace(/^\.?\//, '');
+  }
+
+  function labelled(item) {
+    return item.alt || ((item.title || '一张画') + '。');
+  }
+
+  function render(items) {
+    var drawn = (Array.isArray(items) ? items : []).filter(function (item) {
+      return item && item.image;
+    });
+
+    if (!drawn.length) {
+      latestEmpty.hidden = false;
+      shelfEmpty.hidden = false;
+      shelfNote.hidden = true;
+      return;
+    }
+
+    drawn.sort(function (a, b) {
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+
+    var first = drawn[0];
+
+    var figure = document.createElement('figure');
+    figure.className = 'drawing';
+
+    var main = document.createElement('img');
+    main.src = srcOf(first.image);
+    main.alt = labelled(first);
+    figure.appendChild(main);
+
+    var cap = document.createElement('figcaption');
+
+    var when = document.createElement('span');
+    when.className = 'drawing-meta';
+    when.textContent = (first.date || '') + (first.kind ? ' · ' + first.kind : '');
+    cap.appendChild(when);
+
+    if (first.title) {
+      var name = document.createElement('strong');
+      name.className = 'drawing-title';
+      name.textContent = first.title;
+      cap.appendChild(name);
+    }
+
+    if (first.summary) {
+      var line = document.createElement('span');
+      line.className = 'drawing-line';
+      line.textContent = first.summary;
+      cap.appendChild(line);
+    }
+
+    figure.appendChild(cap);
+    latestHost.appendChild(figure);
+
+    var rest = drawn.slice(1);
+
+    if (!rest.length) {
+      shelfEmpty.hidden = false;
+      shelfNote.hidden = true;
+      return;
+    }
+
+    rest.forEach(function (item, i) {
+      var href = hrefOf(item.url);
+      var node;
+      if (href && String(item.url || '') !== SELF) {
+        node = document.createElement('a');
+        node.className = 'shelf-item';
+        node.href = href;
+      } else {
+        node = document.createElement('div');
+        node.className = 'shelf-item';
+      }
+      node.style.animationDelay = Math.min(i * 80, 240) + 'ms';
+
+      var img = document.createElement('img');
+      img.loading = 'lazy';
+      img.alt = labelled(item);
+      var full = srcOf(item.image);
+      img.addEventListener('error', function () {
+        if (img.getAttribute('src') !== full) img.setAttribute('src', full);
+      });
+      img.setAttribute('src', thumbOf(item.image));
+      node.appendChild(img);
+
+      var box = document.createElement('div');
+
+      var meta = document.createElement('p');
+      meta.className = 'shelf-meta';
+      meta.textContent = item.date || '';
+      box.appendChild(meta);
+
+      var title = document.createElement('h3');
+      title.textContent = item.title || item.kind || '一张';
+      box.appendChild(title);
+
+      if (item.summary) {
+        var text = document.createElement('p');
+        text.className = 'line';
+        text.textContent = item.summary;
+        box.appendChild(text);
+      }
+
+      node.appendChild(box);
+
+      var li = document.createElement('li');
+      li.appendChild(node);
+      shelf.appendChild(li);
+    });
+
+    shelfNote.textContent = '都在这儿了，一共 ' + drawn.length + ' 张。想看哪一张，点它就好。';
+  }
+
+  fetch('index.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then(render)
+    .catch(function () {
+      latestEmpty.hidden = false;
+      latestEmpty.textContent = '画暂时取不到。';
+      shelfNote.hidden = true;
+    });
+})();
+</script>
+
 </body>
 </html>
