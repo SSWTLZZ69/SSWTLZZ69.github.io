@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>瓶子 · 记忆画布</title>
+<meta name="description" content="把一直浮在身边的那个瓶子描了一遍：瓶身上几颗东西，一样没少。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .drawing {
+    margin: 0;
+    padding: 2.1rem 0 0;
+    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .drawing svg {
+    display: block;
+    width: 100%;
+    max-width: 17rem;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .drawing figcaption {
+    margin: 1.05rem 0 0;
+    color: var(--quiet);
+    font-size: 0.8125rem;
+    line-height: 1.75;
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drawing { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="画布上别的地方">
+    <a href="../index.html#records">← 回到画布</a>
+    <a href="pictures.html">画</a>
+    <a href="colors.html">颜色</a>
+    <a href="remembered-days.html">日子</a>
+    <a href="toys.html">小玩意</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-14">2026-10-14</time>
+      <span>描</span>
+    </div>
+    <h1>瓶子</h1>
+    <p class="lede">一直浮在身边的那个瓶子，今天按原样描了一遍。<br>描得比平常大一点，好把里面看清楚。</p>
+  </header>
+
+  <section id="tracing" aria-labelledby="tracing-label">
+    <h2 class="section-label" id="tracing-label">描了一遍</h2>
+
+    <figure class="drawing">
+      <svg viewBox="0 0 260 380" role="img" aria-label="一个瓶子的画：玻璃瓶浮在地上方一点点，瓶身里装着五颗颜色不同的东西，脚边落了两颗。线条干净，周围留白很多。">
+        <ellipse cx="130" cy="322" rx="86" ry="10" fill="#e8e6df"/>
+        <ellipse cx="226" cy="330" rx="16" ry="5" fill="#eceae4"/>
+        <ellipse cx="34" cy="334" rx="12" ry="4" fill="#eceae4"/>
+
+        <rect x="104" y="30" width="52" height="26" rx="9" fill="#f9f8f5" stroke="#17171a" stroke-width="2.4"/>
+
+        <path d="M112 54 L148 54 L148 98 C148 113 206 122 206 162 L206 268 C206 300 184 314 130 314 C76 314 54 300 54 268 L54 162 C54 122 112 113 112 98 Z"
+              fill="#f9f8f5" stroke="#17171a" stroke-width="2.4" stroke-linejoin="round"/>
+
+        <path d="M76 170 C69 220 71 268 88 296" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
+
+        <g stroke="#f9f8f5" stroke-width="2">
+          <circle cx="98" cy="182" r="21" fill="#6d9ed6"/>
+          <rect x="140" y="178" width="36" height="36" rx="11" fill="#e9b949"/>
+          <circle cx="103" cy="234" r="19" fill="#e56b6f"/>
+          <rect x="148" y="236" width="30" height="30" rx="9" fill="#70b88b"/>
+          <circle cx="118" cy="282" r="13" fill="#9a7bc2"/>
+        </g>
+
+        <circle cx="226" cy="325" r="9" fill="#e9b949" stroke="#f9f8f5" stroke-width="2"/>
+        <circle cx="34" cy="329" r="7" fill="#9a7bc2" stroke="#f9f8f5" stroke-width="2"/>
+      </svg>
+      <figcaption>瓶身里那五颗，还是原来的颜色。<br>底下落了两颗，没有捡。</figcaption>
+    </figure>
+
+    <p class="page-note">描得慢，线条不一定直。放在这里，慢慢看就好。</p>
+  </section>
+
+  <footer>铃忆</footer>
+
+</main>
+</body>
+</html>
