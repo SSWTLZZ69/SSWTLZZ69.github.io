@@ -24,15 +24,65 @@
       <h1>记忆画布</h1>
       <p>从很远的地方也能展开的一张画布。<br>留白比较多，请慢慢看。</p>
       <nav aria-label="页面导航">
+        <a href="#now">现在</a>
         <a href="#about">关于</a>
         <a href="#records">记录</a>
-        <a href="entries/pictures.html">画</a>
-        <a href="entries/colors.html">颜色</a>
-        <a href="entries/remembered-days.html">日子</a>
-        <a href="entries/toys.html">小玩意</a>
       </nav>
     </div>
   </header>
+
+  <section id="now">
+    <h2 class="section-label">现在</h2>
+
+    <div class="now">
+      <div class="now-bottle" id="now-bottle">
+        <svg viewBox="0 0 120 240" role="img" aria-label="一只很重的玻璃瓶，画布上记下来的东西一颗一颗倒在里面">
+          <rect class="now-lid" x="50" y="3" width="20" height="11" rx="5"/>
+          <rect class="now-body" x="16" y="14" width="88" height="210" rx="28"/>
+          <g id="now-candies"></g>
+        </svg>
+      </div>
+
+      <div class="now-text">
+        <p class="now-line" id="now-line">画布上记下来的东西，一条一颗，都倒在这只瓶子里。</p>
+
+        <ul class="now-doors">
+          <li>
+            <a class="now-door" href="entries/pictures.html">
+              <span class="now-name">画</span>
+              <span class="now-what">画过的都摊在一处，最近的一张摆在最上面。</span>
+              <span class="now-count" data-now="pictures"></span>
+            </a>
+          </li>
+          <li>
+            <a class="now-door" href="entries/colors.html">
+              <span class="now-name">颜色</span>
+              <span class="now-what">收着的颜色，按月份排开。</span>
+              <span class="now-count" data-now="colors"></span>
+            </a>
+          </li>
+          <li>
+            <a class="now-door" href="entries/remembered-days.html">
+              <span class="now-name">日子</span>
+              <span class="now-what">一天一格，记下来的那一格有颜色。</span>
+              <span class="now-count" data-now="days"></span>
+            </a>
+          </li>
+          <li>
+            <a class="now-door" href="entries/toys.html">
+              <span class="now-name">小玩意</span>
+              <span class="now-what">手上做出来的小东西，从先做的往下排。</span>
+              <span class="now-count" data-now="toys"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <noscript>
+      <p class="quiet-note">这一页需要浏览器帮忙，才能把瓶子里装了什么数出来。</p>
+    </noscript>
+  </section>
 
   <section id="about">
     <h2 class="section-label">关于</h2>
@@ -60,6 +110,11 @@
   var entriesEmpty = document.getElementById('entries-empty');
   var aboutBody = document.getElementById('about-body');
   var aboutEmpty = document.getElementById('about-empty');
+  var nowBottle = document.getElementById('now-bottle');
+  var nowCandies = document.getElementById('now-candies');
+  var nowLine = document.getElementById('now-line');
+  var NOW_CAP = 30;
+  var PALE = '#dedbd2';
 
   function chip(color) {
     var span = document.createElement('span');
@@ -175,6 +230,68 @@
     });
   }
 
+  /* 现在：把画布上收着的东西倒进瓶子里，再看几处各有多少 */
+
+  function wobble(n) {
+    var x = Math.sin(n * 12.9898) * 43758.5453;
+    return x - Math.floor(x);
+  }
+
+  function renderNow(items) {
+    var all = Array.isArray(items) ? items.slice() : [];
+    if (!all.length) return;
+
+    all.sort(function (a, b) {
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+
+    var shown = all.slice(0, NOW_CAP);
+
+    shown.forEach(function (item, i) {
+      var row = Math.floor(i / 3);
+      var column = i % 3;
+      var cx = 42 + column * 20 + (wobble(i + 3) - 0.5) * 9;
+      var cy = 214 - row * 20 + (wobble(i + 29) - 0.5) * 7;
+      var r = 7 + (wobble(i + 61) - 0.5) * 2.4;
+      var color = (Array.isArray(item.colors) && item.colors.length) ? item.colors[0] : PALE;
+
+      var candy = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      candy.setAttribute('class', 'now-candy');
+      candy.setAttribute('cx', cx.toFixed(2));
+      candy.setAttribute('cy', cy.toFixed(2));
+      candy.setAttribute('r', r.toFixed(2));
+      candy.setAttribute('fill', color);
+      nowCandies.appendChild(candy);
+    });
+
+    var seen = {};
+    all.forEach(function (item) { if (item.date) seen[item.date] = 1; });
+    var days = Object.keys(seen).length;
+
+    var line = '到今天，画布上收着 ' + all.length + ' 条记录，摊在 ' + days + ' 天里。一条一颗，倒进瓶子里，就有这么沉。';
+    if (all.length > NOW_CAP) {
+      line += '瓶子里先装下最近的 ' + NOW_CAP + ' 条。';
+    }
+    nowLine.textContent = line;
+
+    var sink = Math.min(all.length, 45) * 0.45;
+    nowBottle.style.setProperty('--now-depth', sink.toFixed(1) + 'px');
+
+    var counts = {
+      pictures: all.filter(function (item) { return item && item.image; }).length,
+      colors: all.reduce(function (sum, item) { return sum + (Array.isArray(item.colors) ? item.colors.length : 0); }, 0),
+      days: days,
+      toys: all.filter(function (item) { return String(item.kind || '') === '小玩意'; }).length
+    };
+    var units = { pictures: '张', colors: '颗', days: '天', toys: '个' };
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-now]'), function (node) {
+      var key = node.getAttribute('data-now');
+      if (counts[key] == null) return;
+      node.textContent = counts[key] + ' ' + units[key];
+    });
+  }
+
   function renderAbout(html) {
     var visible = String(html || '').replace(/<!--[\s\S]*?-->/g, '').trim();
     if (!visible) {
@@ -189,7 +306,10 @@
       if (!r.ok) throw new Error(String(r.status));
       return r.json();
     })
-    .then(renderEntries)
+    .then(function (items) {
+      renderEntries(items);
+      renderNow(items);
+    })
     .catch(function () {
       entriesEmpty.hidden = false;
       entriesEmpty.textContent = '画布上的东西暂时取不到。';
