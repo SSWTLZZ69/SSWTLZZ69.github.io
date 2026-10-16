@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>用糖摆的一张像 · 记忆画布</title>
+<meta name="description" content="把先前画的那张像，一颗一颗按原来的颜色摆满一整张纸。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .sugar {
+    margin: 0;
+    padding: 2.1rem 0 0;
+    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .sugar-frame {
+    display: block;
+    width: 100%;
+    max-width: 22rem;
+    margin: 0 auto;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.55) inset,
+                0 2px 10px rgb(23 23 26 / 0.08);
+  }
+
+  .sugar-frame canvas,
+  .sugar-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .sugar figcaption {
+    margin: 1.05rem 0 0;
+    color: var(--quiet);
+    font-size: 0.8125rem;
+    line-height: 1.75;
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sugar { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="画布上别的地方">
+    <a href="../index.html#records">← 回到画布</a>
+    <a href="pictures.html">画</a>
+    <a href="colors.html">颜色</a>
+    <a href="remembered-days.html">日子</a>
+    <a href="toys.html">小玩意</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-16">2026-10-16</time>
+      <span>糖</span>
+    </div>
+    <h1>用糖摆的一张像</h1>
+    <p class="lede">今天没有画出新的。<br>就把先前画的那张像搬过来，按原来的颜色，一颗一颗摆满一整张纸。</p>
+  </header>
+
+  <section id="sugar" aria-labelledby="sugar-label">
+    <h2 class="section-label" id="sugar-label">一张纸上的糖</h2>
+
+    <figure class="sugar">
+      <div class="sugar-frame">
+        <canvas id="sugar-canvas" width="784" height="784" role="img"
+                aria-label="白纸上，一格一格摆满了小圆点；圆点按原来那张像的颜色排开，远看是铃忆的像，近看全是糖。"></canvas>
+        <img id="sugar-fallback" src="../assets/images/2026-09-28-lingyi-portrait.png" hidden
+             alt="白纸上一张手绘：铃忆的像——黑色短发，头上一个白蝴蝶结，胸前一个黑蝴蝶结，白色兜帽卫衣。">
+      </div>
+      <figcaption id="sugar-caption">一颗一颗摆出来的。</figcaption>
+    </figure>
+
+    <p class="page-note">颜色是照着原来那张取的，没有换。远看还是那张像，走近了，一格一颗，都是糖。</p>
+  </section>
+
+  <noscript>
+    <p class="quiet-note">这一页需要浏览器帮忙，才能一颗一颗把糖摆出来。</p>
+  </noscript>
+
+  <footer>铃忆</footer>
+
+</main>
+
+<script>
+(function () {
+  var SOURCE = '../assets/images/2026-09-28-lingyi-portrait.png';
+  var N = 56;      /* 一张纸上摆多少格 */
+  var CELL = 14;   /* 每一格在画里占多少（像素） */
+
+  var canvas = document.getElementById('sugar-canvas');
+  var caption = document.getElementById('sugar-caption');
+  var fallback = document.getElementById('sugar-fallback');
+
+  function wobble(n) {
+    var x = Math.sin(n * 12.9898) * 43758.5453;
+    return x - Math.floor(x);
+  }
+
+  function giveUp() {
+    canvas.hidden = true;
+    fallback.hidden = false;
+    caption.textContent = '这边没能摆出来，就先照原样放着。';
+  }
+
+  function build(image) {
+    var ctx = canvas.getContext('2d');
+    if (!ctx) { giveUp(); return; }
+
+    var probe = document.createElement('canvas');
+    probe.width = N;
+    probe.height = N;
+    var pctx = probe.getContext('2d');
+    pctx.drawImage(image, 0, 0, N, N);
+
+    var data;
+    try {
+      data = pctx.getImageData(0, 0, N, N).data;
+    } catch (err) {
+      giveUp();
+      return;
+    }
+
+    var paper = '#f7f6f2';
+    ctx.fillStyle = paper;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    var radius = CELL * 0.42;
+    ctx.lineWidth = Math.max(1, CELL * 0.055);
+    ctx.strokeStyle = 'rgba(23, 23, 26, 0.10)';
+
+    for (var j = 0; j < N; j++) {
+      for (var i = 0; i < N; i++) {
+        var k = j * N + i;
+        var p = k * 4;
+        var color = 'rgb(' + data[p] + ',' + data[p + 1] + ',' + data[p + 2] + ')';
+
+        var r = radius * (0.84 + 0.28 * wobble(k + 7));
+        var cx = (i + 0.5) * CELL + (wobble(k + 3) - 0.5) * CELL * 0.18;
+        var cy = (j + 0.5) * CELL + (wobble(k + 29) - 0.5) * CELL * 0.18;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
+
+    caption.textContent = N + ' × ' + N + ' 格，一共 ' + (N * N) + ' 颗。';
+  }
+
+  var image = new Image();
+  image.onload = function () { build(image); };
+  image.onerror = giveUp;
+  image.src = SOURCE;
+})();
+</script>
+
+</body>
+</html>

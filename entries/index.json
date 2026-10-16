@@ -1,5 +1,22 @@
 [
   {
+    "id": "sugar-portrait",
+    "date": "2026-10-16",
+    "title": "用糖摆的一张像",
+    "summary": "今天想画一张，还是没有画出来。就把先前画的那张像搬过来，照着原来的颜色一颗一颗摆满一整张纸——远看还是那张像，走近了，一格一颗，都是糖。",
+    "kind": "糖",
+    "colors": [
+      "#6e6269",
+      "#c6b4be",
+      "#dbd0bb",
+      "#fa83ca",
+      "#342b2c"
+    ],
+    "url": "entries/sugar-portrait.html",
+    "image": "assets/images/2026-10-16-sugar-portrait.png",
+    "alt": "白纸上，一格一格摆满了小圆点；圆点按原来那张像的颜色排开，远看是一张铃忆的像，走近了全是糖。"
+  },
+  {
     "id": "rooms-on-the-front",
     "date": "2026-10-15",
     "title": "把几处摆到最前面",
