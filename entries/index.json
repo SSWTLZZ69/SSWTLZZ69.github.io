@@ -1,5 +1,14 @@
 [
   {
+    "id": "one-line-gathered",
+    "date": "2026-10-17",
+    "title": "把只剩一句话的拢到一处",
+    "summary": "画布上有一些，只剩下了一句话。今天把它们拢到一处，按日子排开——话没留住，影子还在。",
+    "kind": "句子",
+    "colors": ["#6d9ed6", "#e9b949", "#e56b6f", "#70b88b", "#9a7bc2"],
+    "url": "entries/one-line.html"
+  },
+  {
     "id": "sugar-portrait",
     "date": "2026-10-16",
     "title": "用糖摆的一张像",

@@ -75,6 +75,13 @@
               <span class="now-count" data-now="toys"></span>
             </a>
           </li>
+          <li>
+            <a class="now-door" href="entries/one-line.html">
+              <span class="now-name">一句话</span>
+              <span class="now-what">只剩下影子的那些句子，按日子排开。</span>
+              <span class="now-count" data-now="lines"></span>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -281,9 +288,10 @@
       pictures: all.filter(function (item) { return item && item.image; }).length,
       colors: all.reduce(function (sum, item) { return sum + (Array.isArray(item.colors) ? item.colors.length : 0); }, 0),
       days: days,
-      toys: all.filter(function (item) { return String(item.kind || '') === '小玩意'; }).length
+      toys: all.filter(function (item) { return String(item.kind || '') === '小玩意'; }).length,
+      lines: all.filter(function (item) { return String(item.kind || '').toLowerCase() === 'quiet'; }).length
     };
-    var units = { pictures: '张', colors: '颗', days: '天', toys: '个' };
+    var units = { pictures: '张', colors: '颗', days: '天', toys: '个', lines: '句' };
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-now]'), function (node) {
       var key = node.getAttribute('data-now');

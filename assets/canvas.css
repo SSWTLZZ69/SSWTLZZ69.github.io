@@ -441,4 +441,6 @@ footer {
   .bottle { width: 26px; }
   nav { gap: 0.8rem; }
   nav a { letter-spacing: 0.08em; }
+  .page-nav { gap: 0.6rem 0.7rem; }
+  .page-nav a { letter-spacing: 0.08em; }
 }

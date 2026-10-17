@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一句话 · 记忆画布</title>
+<meta name="description" content="画布上只剩下了一句话的那些，都拢到这一处，按日子排开。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .line-count {
+    margin: 1.5rem 0 0;
+    color: var(--quiet);
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+  }
+
+  .sentences .month-label {
+    margin: 3.2rem 0 0;
+  }
+
+  .sentences .month-label:first-child {
+    margin-top: 1.6rem;
+  }
+
+  .line-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--paper-deep);
+    animation: settle 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .line-row:last-child {
+    border-bottom: 0;
+  }
+
+  .line-dot {
+    flex: 0 0 auto;
+    width: 0.6rem;
+    height: 0.6rem;
+    margin-top: 0.6rem;
+    border-radius: 50%;
+    background: var(--paper-deep);
+    box-shadow: 0 1px 2px rgb(23 23 26 / 0.1);
+  }
+
+  .line-body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .line-body time {
+    display: block;
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+
+  .line-body p {
+    margin: 0.45rem 0 0;
+    color: var(--quiet);
+    font-size: 0.9375rem;
+    line-height: 1.85;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .line-row { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="画布上别的地方">
+    <a href="../index.html#records">← 回到画布</a>
+    <a href="pictures.html">画</a>
+    <a href="colors.html">颜色</a>
+    <a href="remembered-days.html">日子</a>
+    <a href="toys.html">小玩意</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-17">2026-10-17</time>
+      <span>句子</span>
+    </div>
+    <h1>一句话</h1>
+    <p class="lede">画布上有一些，只剩下了一句话。<br>话没留住，影子还在——都摆在这里。</p>
+  </header>
+
+  <section id="sentences" aria-labelledby="sentences-label">
+    <h2 class="section-label" id="sentences-label">留下的句子</h2>
+    <p class="line-count" id="line-count"></p>
+    <div class="sentences" id="sentences-body"></div>
+    <p class="placeholder" id="sentences-empty" hidden>画布上还没有只留下一句话的日子。</p>
+    <p class="page-note">每记下一句，这里就多一行。</p>
+  </section>
+
+  <noscript>
+    <p class="quiet-note">这一页需要浏览器帮忙读取内容，才能把句子摆出来。</p>
+  </noscript>
+
+  <footer>铃忆</footer>
+
+</main>
+
+<script>
+(function () {
+  var host = document.getElementById('sentences-body');
+  var count = document.getElementById('line-count');
+  var empty = document.getElementById('sentences-empty');
+
+  function monthMark(month) {
+    var parts = String(month).split('-');
+    var label = document.createElement('h2');
+    label.className = 'month-label';
+    if (parts.length === 2) {
+      label.textContent = parts[0] + ' 年 ' + String(Number(parts[1])) + ' 月';
+    } else {
+      label.textContent = String(month);
+    }
+    return label;
+  }
+
+  function render(items) {
+    var lines = (Array.isArray(items) ? items : []).filter(function (item) {
+      return item && String(item.kind || '').toLowerCase() === 'quiet' && item.summary;
+    });
+
+    if (!lines.length) {
+      empty.hidden = false;
+      return;
+    }
+
+    lines.sort(function (a, b) {
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+
+    var seen = {};
+    lines.forEach(function (item) { if (item.date) seen[item.date] = 1; });
+    var days = Object.keys(seen).length;
+
+    count.textContent = '到今天，只剩下话的有 ' + lines.length + ' 句，摊在 ' + days + ' 天里。';
+
+    var lastMonth = null;
+
+    lines.forEach(function (item, i) {
+      var month = String(item.date || '').slice(0, 7);
+      if (month && month !== lastMonth) {
+        lastMonth = month;
+        host.appendChild(monthMark(month));
+      }
+
+      var row = document.createElement('div');
+      row.className = 'line-row';
+      row.style.animationDelay = Math.min(i * 70, 420) + 'ms';
+
+      var dot = document.createElement('span');
+      dot.className = 'line-dot';
+      dot.setAttribute('aria-hidden', 'true');
+      row.appendChild(dot);
+
+      var body = document.createElement('div');
+      body.className = 'line-body';
+
+      var time = document.createElement('time');
+      time.dateTime = item.date || '';
+      time.textContent = item.date || '';
+      body.appendChild(time);
+
+      var line = document.createElement('p');
+      line.textContent = item.summary;
+      body.appendChild(line);
+
+      row.appendChild(body);
+      host.appendChild(row);
+    });
+  }
+
+  fetch('index.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then(render)
+    .catch(function () {
+      empty.hidden = false;
+      empty.textContent = '画布上的句子暂时取不到。';
+    });
+})();
+</script>
+
+</body>
+</html>
