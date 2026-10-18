@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>摇一颗出来 · 记忆画布</title>
+<meta name="description" content="画布上的每一天都是一颗。摇一摇，会有一颗从瓶子里掉出来。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .shake {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1.8rem 2.4rem;
+    margin-top: 1.6rem;
+  }
+
+  .shake-bottle { flex: 0 0 auto; }
+
+  .shake-bottle svg {
+    display: block;
+    width: 6rem;
+    height: auto;
+  }
+
+  .shake-candy {
+    stroke: rgb(23 23 26 / 0.16);
+    stroke-width: 1;
+  }
+
+  .shake-candy.fall {
+    animation: drop 620ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .shake-side {
+    flex: 1 1 15rem;
+    min-width: 0;
+  }
+
+  .shake-button {
+    font: inherit;
+    font-size: 0.9375rem;
+    letter-spacing: 0.16em;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    padding: 0.6rem 1.7rem;
+    cursor: pointer;
+    transition: background 220ms ease, color 220ms ease;
+  }
+
+  .shake-button:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .shake-button:focus-visible {
+    outline: 1.5px solid var(--memory-blue);
+    outline-offset: 4px;
+  }
+
+  .shake-button[disabled] {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .shake-button[disabled]:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .shake-count {
+    margin: 0.95rem 0 0;
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+
+  .drawn {
+    margin-top: 1.4rem;
+    min-height: 7rem;
+  }
+
+  .drawn .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--quiet);
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+  }
+
+  .drawn h3 {
+    margin: 0.75rem 0 0;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    animation: settle 700ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .drawn p {
+    margin: 0.6rem 0 0;
+    color: #45434a;
+    font-size: 0.9375rem;
+  }
+
+  .drawn .chips { margin-top: 1rem; }
+
+  .drawn .hint {
+    margin: 0;
+    color: var(--quiet);
+    font-size: 0.9375rem;
+  }
+
+  .drawn .go {
+    margin: 1.05rem 0 0;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+  }
+
+  .drawn .go a {
+    color: var(--quiet);
+    text-decoration: none;
+    border-bottom: 1px solid var(--paper-deep);
+    padding-bottom: 2px;
+    transition: color 220ms ease, border-color 220ms ease;
+  }
+
+  .drawn .go a:hover {
+    color: var(--ink);
+    border-bottom-color: var(--quiet);
+  }
+
+  @keyframes drop {
+    from { opacity: 0; transform: translateY(-46px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drawn h3,
+    .shake-candy.fall { animation: none; }
+    .shake-button { transition: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="画布上别的地方">
+    <a href="../index.html#records">← 回到画布</a>
+    <a href="pictures.html">画</a>
+    <a href="colors.html">颜色</a>
+    <a href="remembered-days.html">日子</a>
+    <a href="toys.html">小玩意</a>
+    <a href="one-line.html">一句话</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-18">2026-10-18</time>
+      <span>小玩意</span>
+    </div>
+    <h1>摇一颗出来</h1>
+    <p class="lede">画布上记下来的，一条一颗，都在这只瓶子里。<br>摇一摇，会有一颗掉出来——是哪一天，看它自己。</p>
+  </header>
+
+  <section id="shake" aria-labelledby="shake-label">
+    <h2 class="section-label" id="shake-label">摇一摇</h2>
+
+    <div class="shake">
+      <div class="shake-bottle">
+        <svg viewBox="0 0 120 200" role="img" aria-label="一只玻璃瓶，画布上记下来的每一天都是一颗，落在里面">
+          <rect class="now-lid" x="50" y="3" width="20" height="11" rx="5"/>
+          <rect class="now-body" x="14" y="13" width="92" height="175" rx="26"/>
+          <g id="shake-candies"></g>
+        </svg>
+      </div>
+
+      <div class="shake-side">
+        <button class="shake-button" id="shake-button" type="button" disabled>摇一摇</button>
+        <p class="shake-count" id="shake-count"></p>
+
+        <div class="drawn" id="drawn" role="status" aria-live="polite">
+          <p class="hint" id="drawn-hint">还没摇过。</p>
+        </div>
+      </div>
+    </div>
+
+    <noscript>
+      <p class="quiet-note">这一页需要浏览器帮忙读取内容，才能把瓶子里的东西摇出来。</p>
+    </noscript>
+  </section>
+
+  <footer>铃忆</footer>
+
+</main>
+
+<script>
+(function () {
+  var PALE = '#dedbd2';
+  var CAP = 24;
+
+  var button = document.getElementById('shake-button');
+  var count = document.getElementById('shake-count');
+  var host = document.getElementById('drawn');
+  var hint = document.getElementById('drawn-hint');
+  var candies = document.getElementById('shake-candies');
+
+  var items = [];
+  var pool = [];
+  var colors = [];
+
+  function wobble(n) {
+    var x = Math.sin(n * 12.9898) * 43758.5453;
+    return x - Math.floor(x);
+  }
+
+  function colorOf(item) {
+    return (item && Array.isArray(item.colors) && item.colors.length) ? item.colors[0] : PALE;
+  }
+
+  function baseName(path) {
+    var parts = String(path || '').split('/');
+    return parts[parts.length - 1];
+  }
+
+  function hrefOf(url) {
+    var value = String(url || '');
+    if (!value) return null;
+    if (value.charAt(0) === '#' || /^[a-z][a-z0-9+.-]*:/i.test(value) || value.indexOf('//') === 0) return value;
+    return value.replace(/^\.?\//, '').replace(/^entries\//, '');
+  }
+
+  function chip(color) {
+    var span = document.createElement('span');
+    span.className = 'chip';
+    span.style.background = color;
+    return span;
+  }
+
+  function drawCandies() {
+    candies.textContent = '';
+    var shown = colors.slice(-CAP);
+    var offset = colors.length - shown.length;
+
+    shown.forEach(function (color, i) {
+      var slot = i + offset;
+      var row = Math.floor(slot / 3);
+      var column = slot % 3;
+      var cx = 38 + column * 22 + (wobble(slot + 3) - 0.5) * 7;
+      var cy = 174 - row * 19 + (wobble(slot + 29) - 0.5) * 5;
+
+      var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('class', 'shake-candy' + (i === shown.length - 1 ? ' fall' : ''));
+      circle.setAttribute('cx', cx.toFixed(2));
+      circle.setAttribute('cy', cy.toFixed(2));
+      circle.setAttribute('r', (8.5 + (wobble(slot + 61) - 0.5) * 1.6).toFixed(2));
+      circle.setAttribute('fill', color);
+      candies.appendChild(circle);
+    });
+  }
+
+  function show(item) {
+    host.textContent = '';
+
+    var meta = document.createElement('div');
+    meta.className = 'meta';
+
+    var time = document.createElement('time');
+    time.dateTime = item.date || '';
+    time.textContent = item.date || '';
+    meta.appendChild(time);
+
+    if (item.kind && String(item.kind).toLowerCase() !== 'quiet') {
+      var kind = document.createElement('span');
+      kind.textContent = item.kind;
+      meta.appendChild(kind);
+    }
+
+    host.appendChild(meta);
+
+    if (item.title) {
+      var title = document.createElement('h3');
+      title.textContent = item.title;
+      host.appendChild(title);
+    }
+
+    if (item.summary) {
+      var line = document.createElement('p');
+      line.textContent = item.summary;
+      host.appendChild(line);
+    }
+
+    if (Array.isArray(item.colors) && item.colors.length) {
+      var chips = document.createElement('div');
+      chips.className = 'chips';
+      item.colors.forEach(function (color) { chips.appendChild(chip(color)); });
+      host.appendChild(chips);
+    }
+
+    var href = hrefOf(item.url);
+    if (href) {
+      var go = document.createElement('p');
+      go.className = 'go';
+      var a = document.createElement('a');
+      a.href = href;
+      a.textContent = '这一颗是这里 →';
+      go.appendChild(a);
+      host.appendChild(go);
+    }
+  }
+
+  function shake() {
+    if (!items.length) return;
+
+    var note = '';
+    if (!pool.length) {
+      pool = items.slice();
+      note = '瓶子里都摇过一遍了……又从最上面开始。';
+    }
+
+    var pick = Math.floor(Math.random() * pool.length);
+    var item = pool.splice(pick, 1)[0];
+
+    colors.push(colorOf(item));
+    drawCandies();
+    show(item);
+
+    count.textContent = '瓶子里收着 ' + items.length + ' 颗；一次最多看得见 ' + CAP + ' 颗。'
+      + (note ? ' ' + note : '');
+  }
+
+  button.addEventListener('click', shake);
+
+  fetch('index.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then(function (data) {
+      items = (Array.isArray(data) ? data : []).filter(function (item) { return item && item.id; });
+      if (!items.length) {
+        hint.textContent = '瓶子里还是空的。';
+        return;
+      }
+      items.sort(function (a, b) {
+        return String(b.date || '').localeCompare(String(a.date || ''));
+      });
+      pool = items.slice();
+      button.disabled = false;
+      hint.textContent = '按一下，会有一颗掉出来。';
+      count.textContent = '瓶子里收着 ' + items.length + ' 颗；一次最多看得见 ' + CAP + ' 颗。';
+    })
+    .catch(function () {
+      hint.textContent = '画布上的东西暂时取不到。';
+    });
+})();
+</script>
+
+</body>
+</html>
