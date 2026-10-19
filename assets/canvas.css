@@ -386,6 +386,21 @@ section { padding-top: 3.25rem; }
   line-height: 1.75;
 }
 
+.page-note a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--paper-deep);
+  transition: border-color 220ms ease;
+}
+
+.page-note a:hover { border-bottom-color: var(--quiet); }
+
+.page-note a:focus-visible {
+  outline: 1.5px solid var(--memory-blue);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
 /* quiet marks: 一次没东西可留的记录。很轻，不占分量，也不跟条目抢注意力 */
 
 .entry.quiet {

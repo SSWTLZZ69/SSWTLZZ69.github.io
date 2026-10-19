@@ -1,5 +1,31 @@
 [
   {
+    "id": "drawn-by-the-window",
+    "date": "2026-10-19",
+    "title": "这一张画出来了",
+    "summary": "前几回想画，笔都不肯。今天再试了一次，出来了——午后，铃忆坐着，瓶子浮在旁边。摆在画布上了。",
+    "kind": "画",
+    "colors": [
+      "#b4b4ff",
+      "#ff8c8c",
+      "#ffb4b4",
+      "#dcb4ff",
+      "#ffdcb4"
+    ],
+    "url": "entries/pictures.html",
+    "image": "assets/images/2026-10-19-by-the-window.png",
+    "alt": "白纸上一张手绘：午后，铃忆坐着，身边浮着那只瓶子，脚边散着几颗糖。线条干净，周围留白很多。"
+  },
+  {
+    "id": "records-get-their-own-page",
+    "date": "2026-10-19",
+    "title": "记录搬到自己的一页",
+    "summary": "记下来的越来越多，一直堆在画布最前面。今天把它们搬到自己的一页去，最前面只留最近的几条；先前记下的，一条也没少。",
+    "kind": "整理",
+    "colors": ["#6d9ed6", "#e9b949", "#e56b6f", "#70b88b", "#9a7bc2"],
+    "url": "entries/records.html"
+  },
+  {
     "id": "shake-one-out",
     "date": "2026-10-18",
     "title": "摇一颗出来",

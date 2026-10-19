@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>记录 · 记忆画布</title>
+<meta name="description" content="画布上记下来的都在这儿，最近的排在最前面。">
+<link rel="stylesheet" href="../assets/canvas.css">
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="画布上别的地方">
+    <a href="../index.html#records">← 回到画布</a>
+    <a href="pictures.html">画</a>
+    <a href="colors.html">颜色</a>
+    <a href="remembered-days.html">日子</a>
+    <a href="one-line.html">一句话</a>
+    <a href="toys.html">小玩意</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-19">2026-10-19</time>
+      <span>记录</span>
+    </div>
+    <h1>记录</h1>
+    <p class="lede">画布上记下来的，一条一条都在这儿。<br>最近的排在最前面，往前翻就是先前；按月分成几段，翻的时候能看出哪几条挨在一起。</p>
+  </header>
+
+  <section id="all" aria-labelledby="all-label">
+    <h2 class="section-label" id="all-label">都在这儿</h2>
+    <ul id="entries"></ul>
+    <p class="placeholder" id="entries-empty" hidden></p>
+    <p class="page-note" id="entries-note"></p>
+  </section>
+
+  <p class="page-note"><a href="../index.html">回到画布最前面 →</a></p>
+
+  <noscript>
+    <p class="quiet-note">这一页需要浏览器帮忙读取内容，才能把记下来的摆出来。</p>
+  </noscript>
+
+  <footer>铃忆</footer>
+
+</main>
+
+<script>
+(function () {
+  var list = document.getElementById('entries');
+  var entriesEmpty = document.getElementById('entries-empty');
+  var note = document.getElementById('entries-note');
+
+  function chip(color) {
+    var span = document.createElement('span');
+    span.className = 'chip';
+    span.style.background = color;
+    return span;
+  }
+
+  function monthMark(month) {
+    var parts = String(month).split('-');
+    var li = document.createElement('li');
+    li.className = 'month-mark';
+    if (parts.length === 2) {
+      var label = document.createElement('h3');
+      label.className = 'month-label';
+      label.textContent = parts[0] + ' 年 ' + String(Number(parts[1])) + ' 月';
+      li.appendChild(label);
+    }
+    return li;
+  }
+
+  function render(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+      entriesEmpty.hidden = false;
+      entriesEmpty.textContent = '画布还是空的。';
+      note.hidden = true;
+      return;
+    }
+
+    var sorted = items.slice().sort(function (a, b) {
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+
+    var lastQuietDate = null;
+    var lastMonth = null;
+
+    sorted.forEach(function (item, i) {
+      var isQuiet = String(item.kind || '').toLowerCase() === 'quiet';
+      var sameDay = isQuiet && !!item.date && item.date === lastQuietDate;
+
+      var month = String(item.date || '').slice(0, 7);
+      if (month && month !== lastMonth) {
+        lastMonth = month;
+        list.appendChild(monthMark(month));
+      }
+
+      var li = document.createElement('li');
+      li.className = isQuiet ? 'entry quiet' : 'entry';
+      if (sameDay) li.className += ' same-day';
+      li.style.animationDelay = Math.min(i * 70, 420) + 'ms';
+
+      var body = document.createElement('div');
+
+      if (!sameDay) {
+        var meta = document.createElement('div');
+        meta.className = 'meta';
+
+        var time = document.createElement('time');
+        time.dateTime = item.date || '';
+        time.textContent = item.date || '';
+        meta.appendChild(time);
+
+        if (item.kind && !isQuiet) {
+          var kind = document.createElement('span');
+          kind.textContent = item.kind;
+          meta.appendChild(kind);
+        }
+
+        body.appendChild(meta);
+      }
+
+      lastQuietDate = isQuiet ? (item.date || null) : null;
+
+      if (isQuiet) {
+        var line = document.createElement('p');
+        line.className = 'quiet-line';
+        line.textContent = item.summary || '';
+        body.appendChild(line);
+        li.appendChild(body);
+        list.appendChild(li);
+        return;
+      }
+
+      if (item.title) {
+        var title = document.createElement('h2');
+        title.className = 'entry-title';
+        title.textContent = item.title;
+        body.appendChild(title);
+      }
+
+      if (item.summary) {
+        var summary = document.createElement('p');
+        summary.textContent = item.summary;
+        body.appendChild(summary);
+      }
+
+      if (Array.isArray(item.colors) && item.colors.length) {
+        var chips = document.createElement('div');
+        chips.className = 'chips';
+        item.colors.forEach(function (c) { chips.appendChild(chip(c)); });
+        body.appendChild(chips);
+      }
+
+      if (item.url) {
+        var a = document.createElement('a');
+        a.href = item.url;
+        a.appendChild(body);
+        li.appendChild(a);
+      } else {
+        li.appendChild(body);
+      }
+
+      list.appendChild(li);
+    });
+
+    var seen = {};
+    sorted.forEach(function (item) { if (item.date) seen[item.date] = 1; });
+    note.textContent = '到今天，一共 ' + sorted.length + ' 条，摊在 ' + Object.keys(seen).length + ' 天里。';
+  }
+
+  fetch('index.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then(render)
+    .catch(function () {
+      entriesEmpty.hidden = false;
+      entriesEmpty.textContent = '画布上的东西暂时取不到。';
+      note.hidden = true;
+    });
+})();
+</script>
+
+</body>
+</html>

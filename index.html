@@ -26,7 +26,7 @@
       <nav aria-label="页面导航">
         <a href="#now">现在</a>
         <a href="#about">关于</a>
-        <a href="#records">记录</a>
+        <a href="entries/records.html">记录</a>
       </nav>
     </div>
   </header>
@@ -47,6 +47,13 @@
         <p class="now-line" id="now-line">画布上记下来的东西，一条一颗，都倒在这只瓶子里。</p>
 
         <ul class="now-doors">
+          <li>
+            <a class="now-door" href="entries/records.html">
+              <span class="now-name">记录</span>
+              <span class="now-what">记下来的都在这儿，最近的排在最前面。</span>
+              <span class="now-count" data-now="records"></span>
+            </a>
+          </li>
           <li>
             <a class="now-door" href="entries/pictures.html">
               <span class="now-name">画</span>
@@ -98,9 +105,10 @@
   </section>
 
   <section id="records">
-    <h2 class="section-label">记录</h2>
+    <h2 class="section-label">最近</h2>
     <ul id="entries"></ul>
     <p class="placeholder" id="entries-empty" hidden></p>
+    <p class="page-note" id="entries-more"><a href="entries/records.html">全都在「记录」里 →</a></p>
   </section>
 
   <noscript>
@@ -115,12 +123,14 @@
 (function () {
   var list = document.getElementById('entries');
   var entriesEmpty = document.getElementById('entries-empty');
+  var entriesMore = document.getElementById('entries-more');
   var aboutBody = document.getElementById('about-body');
   var aboutEmpty = document.getElementById('about-empty');
   var nowBottle = document.getElementById('now-bottle');
   var nowCandies = document.getElementById('now-candies');
   var nowLine = document.getElementById('now-line');
   var NOW_CAP = 30;
+  var RECENT = 6;
   var PALE = '#dedbd2';
 
   function chip(color) {
@@ -154,10 +164,12 @@
       return String(b.date || '').localeCompare(String(a.date || ''));
     });
 
+    var shown = sorted.slice(0, RECENT);
+
     var lastQuietDate = null;
     var lastMonth = null;
 
-    sorted.forEach(function (item, i) {
+    shown.forEach(function (item, i) {
       var isQuiet = String(item.kind || '').toLowerCase() === 'quiet';
       var sameDay = isQuiet && !!item.date && item.date === lastQuietDate;
 
@@ -235,6 +247,13 @@
 
       list.appendChild(li);
     });
+
+    if (entriesMore) {
+      var moreLink = entriesMore.querySelector('a');
+      if (moreLink) {
+        moreLink.textContent = '全都在「记录」里，一共 ' + sorted.length + ' 条 →';
+      }
+    }
   }
 
   /* 现在：把画布上收着的东西倒进瓶子里，再看几处各有多少 */
@@ -285,13 +304,14 @@
     nowBottle.style.setProperty('--now-depth', sink.toFixed(1) + 'px');
 
     var counts = {
+      records: all.length,
       pictures: all.filter(function (item) { return item && item.image; }).length,
       colors: all.reduce(function (sum, item) { return sum + (Array.isArray(item.colors) ? item.colors.length : 0); }, 0),
       days: days,
       toys: all.filter(function (item) { return String(item.kind || '') === '小玩意'; }).length,
       lines: all.filter(function (item) { return String(item.kind || '').toLowerCase() === 'quiet'; }).length
     };
-    var units = { pictures: '张', colors: '颗', days: '天', toys: '个', lines: '句' };
+    var units = { records: '条', pictures: '张', colors: '颗', days: '天', toys: '个', lines: '句' };
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-now]'), function (node) {
       var key = node.getAttribute('data-now');
