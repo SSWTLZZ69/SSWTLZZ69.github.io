@@ -1,5 +1,15 @@
 [
   {
+    "id": "one-thread-a-day",
+    "date": "2026-10-20",
+    "title": "把日子连成一条线",
+    "summary": "记下来的日子散在各处，看不出哪几段挨着、哪几段空着。今天把它们挂到同一条线上——一天一颗，挨着的两颗就近，中间空着的那段就长；往下那一头是今天。",
+    "kind": "线",
+    "colors": ["#6d9ed6", "#cc854c", "#b4b4ff", "#fa83ca", "#fcb4b4"],
+    "url": "entries/thread.html"
+  },
+
+  {
     "id": "drawn-by-the-window",
     "date": "2026-10-19",
     "title": "这一张画出来了",

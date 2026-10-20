@@ -55,6 +55,13 @@
             </a>
           </li>
           <li>
+            <a class="now-door" href="entries/thread.html">
+              <span class="now-name">线</span>
+              <span class="now-what">一天一颗，隔得久了，中间那段就长。</span>
+              <span class="now-count" data-now="thread"></span>
+            </a>
+          </li>
+          <li>
             <a class="now-door" href="entries/pictures.html">
               <span class="now-name">画</span>
               <span class="now-what">画过的都摊在一处，最近的一张摆在最上面。</span>
@@ -294,6 +301,22 @@
     all.forEach(function (item) { if (item.date) seen[item.date] = 1; });
     var days = Object.keys(seen).length;
 
+    function dayNumber(date) {
+      var parts = String(date || '').split('-');
+      if (parts.length !== 3) return null;
+      var t = Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      return isNaN(t) ? null : t;
+    }
+
+    var oldest = all.reduce(function (min, item) {
+      var d = String(item.date || '');
+      return (d && (!min || d < min)) ? d : min;
+    }, '');
+    var newest = String((all[0] && all[0].date) || '');
+    var t0 = dayNumber(oldest);
+    var t1 = dayNumber(newest);
+    var span = (t0 != null && t1 != null) ? Math.round((t1 - t0) / 86400000) + 1 : days;
+
     var line = '到今天，画布上收着 ' + all.length + ' 条记录，摊在 ' + days + ' 天里。一条一颗，倒进瓶子里，就有这么沉。';
     if (all.length > NOW_CAP) {
       line += '瓶子里先装下最近的 ' + NOW_CAP + ' 条。';
@@ -305,13 +328,14 @@
 
     var counts = {
       records: all.length,
+      thread: span,
       pictures: all.filter(function (item) { return item && item.image; }).length,
       colors: all.reduce(function (sum, item) { return sum + (Array.isArray(item.colors) ? item.colors.length : 0); }, 0),
       days: days,
       toys: all.filter(function (item) { return String(item.kind || '') === '小玩意'; }).length,
       lines: all.filter(function (item) { return String(item.kind || '').toLowerCase() === 'quiet'; }).length
     };
-    var units = { records: '条', pictures: '张', colors: '颗', days: '天', toys: '个', lines: '句' };
+    var units = { records: '条', thread: '天', pictures: '张', colors: '颗', days: '天', toys: '个', lines: '句' };
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-now]'), function (node) {
       var key = node.getAttribute('data-now');

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一条线 · 记忆画布</title>
+<meta name="description" content="把记下来的日子挂到同一条线上，一天一颗；隔得越久，中间那段就越长。">
+<link rel="stylesheet" href="../assets/canvas.css">
+<style>
+  .thread-count {
+    margin: 1.5rem 0 0;
+    color: var(--quiet);
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    line-height: 1.9;
+  }
+
+  .thread {
+    position: relative;
+    margin: 2.2rem 0 0;
+    padding: 0 0 0 1.5rem;
+    list-style: none;
+  }
+
+  .thread::before {
+    content: "";
+    position: absolute;
+    left: 5.5px;
+    top: 0.55rem;
+    bottom: 0.55rem;
+    width: 1px;
+    background: var(--paper-deep);
+  }
+
+  .thread-day {
+    position: relative;
+    padding: 0.5rem 0;
+  }
+
+  .thread-day::before {
+    content: "";
+    position: absolute;
+    left: -1.5rem;
+    top: 0.85rem;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--bead, var(--paper-deep));
+    box-shadow: 0 0 0 4px var(--paper);
+    transition: transform 220ms ease;
+  }
+
+  .thread-day.many::before {
+    width: 14px;
+    height: 14px;
+    left: -1.6rem;
+    top: 0.72rem;
+  }
+
+  .thread-day.crowded::before {
+    width: 17px;
+    height: 17px;
+    left: -1.68rem;
+    top: 0.62rem;
+  }
+
+  .thread-day.pale::before {
+    background: var(--paper-deep);
+    box-shadow: 0 0 0 4px var(--paper), inset 0 0 0 1px #d5d2c9;
+  }
+
+  .thread-day > a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .thread-day > a:focus-visible {
+    outline: 1.5px solid var(--memory-blue);
+    outline-offset: 5px;
+    border-radius: 3px;
+  }
+
+  .thread-day > a:hover .thread-line {
+    color: #2b2a30;
+  }
+
+  .thread-date {
+    display: block;
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+
+  .thread-line {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin: 0.25rem 0 0;
+    color: #45434a;
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    transition: color 220ms ease;
+  }
+
+  .thread-more {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+
+  .thread-gap {
+    position: relative;
+    height: var(--gap, 1.5rem);
+  }
+
+  .thread-gap span {
+    position: absolute;
+    left: 0;
+    bottom: -0.15rem;
+    color: #a5a2a9;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+  }
+
+  .thread-end {
+    position: relative;
+    margin: 0;
+    padding: 0.5rem 0 0;
+    color: var(--quiet);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+
+  .thread-end::before {
+    content: "";
+    position: absolute;
+    left: -1.5rem;
+    top: 0.95rem;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px #d5d2c9, 0 0 0 4px var(--paper);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .thread-day::before,
+    .thread-line { transition: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="page-nav" aria-label="画布上别的地方">
+    <a href="../index.html#records">← 回到画布</a>
+    <a href="pictures.html">画</a>
+    <a href="colors.html">颜色</a>
+    <a href="remembered-days.html">日子</a>
+    <a href="one-line.html">一句话</a>
+    <a href="toys.html">小玩意</a>
+  </nav>
+
+  <header class="page-head">
+    <div class="meta">
+      <time datetime="2026-10-20">2026-10-20</time>
+      <span>线</span>
+    </div>
+    <h1>一条线</h1>
+    <p class="lede">记下来的日子，挂到同一条线上——一天一颗。<br>挨着的，两颗就近；中间空着的，那段就长。往下那一头，是今天。</p>
+  </header>
+
+  <section id="thread-section" aria-labelledby="thread-label">
+    <h2 class="section-label" id="thread-label">一天一颗</h2>
+    <p class="thread-count" id="thread-count">这一页要等一会儿，才把线牵出来。</p>
+    <ol class="thread" id="thread"></ol>
+    <p class="placeholder" id="thread-empty" hidden></p>
+    <p class="page-note" id="thread-note"></p>
+  </section>
+
+  <p class="page-note"><a href="../index.html">回到画布最前面 →</a></p>
+
+  <noscript>
+    <p class="quiet-note">这一页需要浏览器帮忙读取内容，才能把线牵出来。</p>
+  </noscript>
+
+  <footer>铃忆</footer>
+
+</main>
+
+<script>
+(function () {
+  var list = document.getElementById('thread');
+  var count = document.getElementById('thread-count');
+  var empty = document.getElementById('thread-empty');
+  var note = document.getElementById('thread-note');
+
+  var MS_DAY = 86400000;
+  var STEP = 34;
+  var PALE = '#dedbd2';
+
+  function toUTC(date) {
+    var parts = String(date || '').split('-');
+    if (parts.length !== 3) return null;
+    var t = Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return isNaN(t) ? null : t;
+  }
+
+  function shortDate(date) {
+    var parts = String(date || '').split('-');
+    if (parts.length !== 3) return String(date || '');
+    return String(Number(parts[1])) + ' 月 ' + String(Number(parts[2])) + ' 号';
+  }
+
+  function twoDigit(date) {
+    var parts = String(date || '').split('-');
+    if (parts.length !== 3) return String(date || '');
+    return parts[1] + '-' + parts[2];
+  }
+
+  function groupByDay(items) {
+    var sorted = items.filter(function (item) {
+      return item && item.date;
+    }).sort(function (a, b) {
+      return String(a.date).localeCompare(String(b.date));
+    });
+
+    var days = [];
+    sorted.forEach(function (item) {
+      var last = days[days.length - 1];
+      if (last && last.date === item.date) {
+        last.items.push(item);
+      } else {
+        days.push({ date: item.date, items: [item] });
+      }
+    });
+
+    days.forEach(function (day) {
+      day.items.sort(function (a, b) {
+        return String(b.kind || '').localeCompare(String(a.kind || ''));
+      });
+      day.bead = PALE;
+      day.hasColor = false;
+      day.items.forEach(function (item) {
+        if (!day.hasColor && Array.isArray(item.colors) && item.colors.length) {
+          day.bead = item.colors[0];
+          day.hasColor = true;
+        }
+      });
+
+      var head = null;
+      day.items.forEach(function (item) {
+        if (!head && item.title) head = item;
+      });
+      if (!head) head = day.items[0];
+      day.head = head;
+      day.text = (head && head.title) ? head.title : String((head && head.summary) || '');
+      day.link = (head && head.url) ? head.url : null;
+    });
+
+    return days;
+  }
+
+  function render(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+      empty.hidden = false;
+      empty.textContent = '画布还是空的。';
+      count.hidden = true;
+      note.hidden = true;
+      return;
+    }
+
+    var days = groupByDay(items);
+    if (!days.length) {
+      empty.hidden = false;
+      empty.textContent = '画布还是空的。';
+      count.hidden = true;
+      note.hidden = true;
+      return;
+    }
+
+    days.forEach(function (day, i) {
+      if (i > 0) {
+        var prev = toUTC(days[i - 1].date);
+        var now = toUTC(day.date);
+        var gap = (prev != null && now != null) ? Math.round((now - prev) / MS_DAY) : 1;
+        if (gap > 1) {
+          var blank = gap - 1;
+          var spacer = document.createElement('li');
+          spacer.className = 'thread-gap';
+          spacer.style.setProperty('--gap', (blank * STEP) + 'px');
+          var mark = document.createElement('span');
+          mark.textContent = '空了 ' + blank + ' 天';
+          spacer.appendChild(mark);
+          list.appendChild(spacer);
+        }
+      }
+
+      var li = document.createElement('li');
+      li.className = 'thread-day';
+      if (!day.hasColor) li.className += ' pale';
+      if (day.items.length >= 2) li.className += ' many';
+      if (day.items.length >= 4) li.className += ' crowded';
+      li.style.setProperty('--bead', day.bead);
+
+      var body = document.createDocumentFragment();
+
+      var date = document.createElement('time');
+      date.className = 'thread-date';
+      date.dateTime = day.date;
+      date.textContent = twoDigit(day.date);
+
+      var line = document.createElement('span');
+      line.className = 'thread-line';
+      line.textContent = day.text;
+
+      body.appendChild(date);
+      body.appendChild(line);
+
+      if (day.items.length > 1) {
+        var more = document.createElement('span');
+        more.className = 'thread-more';
+        more.textContent = '这一天还有 ' + (day.items.length - 1) + ' 条';
+        body.appendChild(more);
+      }
+
+      if (day.link) {
+        var a = document.createElement('a');
+        a.href = day.link;
+        a.appendChild(body);
+        li.appendChild(a);
+      } else {
+        li.appendChild(body);
+      }
+
+      list.appendChild(li);
+    });
+
+    var end = document.createElement('li');
+    end.className = 'thread-end';
+    end.textContent = '往下的那一头';
+    list.appendChild(end);
+
+    var first = days[0].date;
+    var last = days[days.length - 1].date;
+    var t0 = toUTC(first);
+    var t1 = toUTC(last);
+    var span = (t0 != null && t1 != null) ? Math.round((t1 - t0) / MS_DAY) + 1 : days.length;
+    var blankDays = Math.max(span - days.length, 0);
+
+    var text = '从 ' + shortDate(first) + '到 ' + shortDate(last) + '，一共 ' + span + ' 天：线上有 ' + days.length + ' 颗';
+    if (blankDays > 0) {
+      text += '，空着的 ' + blankDays + ' 天也在这条线上';
+    }
+    text += '。';
+    count.textContent = text;
+
+    note.textContent = '这是照着记下来的日子排的。每记下一天，线就往下一长一点。';
+  }
+
+  fetch('index.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then(render)
+    .catch(function () {
+      empty.hidden = false;
+      empty.textContent = '画布上的东西暂时取不到。';
+      count.hidden = true;
+      note.hidden = true;
+    });
+})();
+</script>
+
+</body>
+</html>
