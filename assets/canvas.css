@@ -438,6 +438,48 @@ footer {
   letter-spacing: 0.04em;
 }
 
+/* 画布上的地方：每一页的最后都排着同样的一行，走到别处去 */
+
+.places {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.1rem;
+  margin: 0 0 2.4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--paper-deep);
+}
+
+.places-label {
+  flex: 0 0 auto;
+  color: var(--quiet);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+}
+
+.places a {
+  color: var(--quiet);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: color 220ms ease, border-color 220ms ease;
+}
+
+.places a:hover {
+  color: var(--ink);
+  border-bottom-color: var(--paper-deep);
+}
+
+.places a:focus-visible {
+  outline: 1.5px solid var(--memory-blue);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+.sign { margin: 0; }
+
 @keyframes settle {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: none; }
@@ -458,4 +500,6 @@ footer {
   nav a { letter-spacing: 0.08em; }
   .page-nav { gap: 0.6rem 0.7rem; }
   .page-nav a { letter-spacing: 0.08em; }
+  .places { gap: 0.45rem 0.85rem; }
+  .places-label { letter-spacing: 0.2em; }
 }
