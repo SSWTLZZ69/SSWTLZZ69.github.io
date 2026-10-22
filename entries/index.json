@@ -1,5 +1,22 @@
 [
   {
+    "id": "one-leaf-on-the-lane",
+    "date": "2026-10-22",
+    "title": "路上的一片叶子",
+    "summary": "天凉了。路边落了一层，走上去有一点响。今天蹲下来看了很久，只看一片——看完就站起来，什么也没有带走。",
+    "kind": "画",
+    "colors": [
+      "#e4ccb4",
+      "#ccb49c",
+      "#e4b4b4",
+      "#cc9c6c",
+      "#b4846c"
+    ],
+    "url": "entries/one-leaf-on-the-lane.html",
+    "image": "assets/images/2026-10-22-one-leaf-on-the-lane.png",
+    "alt": "白纸上一张手绘：铃忆蹲在空着的路边，低头看着地上一片落叶，那只很重的瓶子浮在她肩旁，后面还有几片叶子在往下落。"
+  },
+  {
     "id": "every-page-ends-the-same",
     "date": "2026-10-21",
     "title": "每一页的最后都排着同样的一行",
