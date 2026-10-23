@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>记录 · 记忆画布</title>
-<meta name="description" content="画布上记下来的都在这儿，最近的排在最前面。">
+<meta name="description" content="画布上记下来的都在这儿，最近的排在最前面；也可以写一个字、按一种颜色，把剩下的收拢。">
 <link rel="stylesheet" href="../assets/canvas.css">
 </head>
 <body>
@@ -20,11 +20,29 @@
       <span>记录</span>
     </div>
     <h1>记录</h1>
-    <p class="lede">画布上记下来的，一条一条都在这儿。<br>最近的排在最前面，往前翻就是先前；按月分成几段，翻的时候能看出哪几条挨在一起。</p>
+    <p class="lede">画布上记下来的，一条一条都在这儿。<br>最近的排在最前面，往前翻就是先前；按月分成几段，翻的时候能看出哪几条挨在一起。<br>要找什么，就在下面写一个字，或者按一种颜色。</p>
   </header>
 
   <section id="all" aria-labelledby="all-label">
     <h2 class="section-label" id="all-label">都在这儿</h2>
+
+    <form class="find" id="find" role="search" aria-label="在记录里找一样东西">
+      <label class="find-label" for="find-input">找一找</label>
+      <div class="find-row">
+        <input class="find-input" id="find-input" type="search" autocomplete="off" placeholder="一个字、一个词、一天……">
+        <button class="find-clear" id="find-clear" type="button" hidden>清掉</button>
+      </div>
+      <ul class="find-colors" id="find-colors">
+        <li><button class="find-dot" type="button" data-hue="" aria-pressed="true">全都</button></li>
+        <li><button class="find-dot" type="button" data-hue="blue" aria-pressed="false"><span class="find-dot-mark" style="background:#6d9ed6"></span>蓝</button></li>
+        <li><button class="find-dot" type="button" data-hue="amber" aria-pressed="false"><span class="find-dot-mark" style="background:#e9b949"></span>黄</button></li>
+        <li><button class="find-dot" type="button" data-hue="red" aria-pressed="false"><span class="find-dot-mark" style="background:#e56b6f"></span>红</button></li>
+        <li><button class="find-dot" type="button" data-hue="green" aria-pressed="false"><span class="find-dot-mark" style="background:#70b88b"></span>绿</button></li>
+        <li><button class="find-dot" type="button" data-hue="violet" aria-pressed="false"><span class="find-dot-mark" style="background:#9a7bc2"></span>紫</button></li>
+      </ul>
+      <p class="find-count" id="find-count" aria-live="polite"></p>
+    </form>
+
     <ul id="entries"></ul>
     <p class="placeholder" id="entries-empty" hidden></p>
     <p class="page-note" id="entries-note"></p>
@@ -57,6 +75,15 @@
   var list = document.getElementById('entries');
   var entriesEmpty = document.getElementById('entries-empty');
   var note = document.getElementById('entries-note');
+  var findForm = document.getElementById('find');
+  var input = document.getElementById('find-input');
+  var clear = document.getElementById('find-clear');
+  var colorList = document.getElementById('find-colors');
+  var count = document.getElementById('find-count');
+
+  var all = [];
+  var query = '';
+  var hue = '';
 
   function chip(color) {
     var span = document.createElement('span');
@@ -78,22 +105,67 @@
     return li;
   }
 
-  function render(items) {
-    if (!Array.isArray(items) || items.length === 0) {
+  /* 一种颜色算哪一种：先看深浅，太浅、太灰的不算颜色 */
+
+  function hueOf(hex) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(hex || '').trim());
+    if (!m) return '';
+    var n = parseInt(m[1], 16);
+    var r = (n >> 16 & 255) / 255;
+    var g = (n >> 8 & 255) / 255;
+    var b = (n & 255) / 255;
+    var max = Math.max(r, g, b);
+    var min = Math.min(r, g, b);
+    var d = max - min;
+    var l = (max + min) / 2;
+    var s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+    if (l > 0.95 || s < 0.18) return '';
+    var h;
+    if (max === r) h = ((g - b) / d) % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h = (h * 60 + 360) % 360;
+    if (h < 20 || h >= 340) return 'red';
+    if (h < 70) return 'amber';
+    if (h < 175) return 'green';
+    if (h < 265) return 'blue';
+    return 'violet';
+  }
+
+  function textOf(item) {
+    return [item.title, item.summary, item.kind, item.date, item.alt]
+      .filter(Boolean).join(' ').toLowerCase();
+  }
+
+  function matches(item) {
+    if (query && textOf(item).indexOf(query) < 0) return false;
+    if (hue) {
+      var colors = Array.isArray(item.colors) ? item.colors : [];
+      if (!colors.some(function (c) { return hueOf(c) === hue; })) return false;
+    }
+    return true;
+  }
+
+  function render() {
+    while (list.firstChild) list.removeChild(list.firstChild);
+
+    if (!all.length) {
       entriesEmpty.hidden = false;
       entriesEmpty.textContent = '画布还是空的。';
       note.hidden = true;
+      count.textContent = '';
       return;
     }
 
-    var sorted = items.slice().sort(function (a, b) {
+    var sorted = all.slice().sort(function (a, b) {
       return String(b.date || '').localeCompare(String(a.date || ''));
     });
 
+    var shown = sorted.filter(matches);
     var lastQuietDate = null;
     var lastMonth = null;
 
-    sorted.forEach(function (item, i) {
+    shown.forEach(function (item, i) {
       var isQuiet = String(item.kind || '').toLowerCase() === 'quiet';
       var sameDay = isQuiet && !!item.date && item.date === lastQuietDate;
 
@@ -172,17 +244,73 @@
       list.appendChild(li);
     });
 
+    var active = !!query || !!hue;
+
+    if (!shown.length) {
+      entriesEmpty.hidden = false;
+      entriesEmpty.textContent = '没有找到。换一个字，或者按「全都」再看看。';
+    } else {
+      entriesEmpty.hidden = true;
+    }
+
+    if (active) {
+      var seenFound = {};
+      shown.forEach(function (item) { if (item.date) seenFound[item.date] = 1; });
+      count.textContent = shown.length
+        ? '找到 ' + shown.length + ' 条，摊在 ' + Object.keys(seenFound).length + ' 天里。'
+        : '一条也没找到。';
+    } else {
+      count.textContent = '一共 ' + all.length + ' 条，写一个字或者按一种颜色，剩下的会自己收拢。';
+    }
+
     var seen = {};
     sorted.forEach(function (item) { if (item.date) seen[item.date] = 1; });
     note.textContent = '到今天，一共 ' + sorted.length + ' 条，摊在 ' + Object.keys(seen).length + ' 天里。';
   }
+
+  function paintColors() {
+    Array.prototype.forEach.call(colorList.querySelectorAll('button'), function (btn) {
+      btn.setAttribute('aria-pressed', btn.getAttribute('data-hue') === hue ? 'true' : 'false');
+    });
+  }
+
+  input.addEventListener('input', function () {
+    query = input.value.trim().toLowerCase();
+    clear.hidden = !input.value;
+    render();
+  });
+
+  clear.addEventListener('click', function () {
+    input.value = '';
+    query = '';
+    hue = '';
+    clear.hidden = true;
+    paintColors();
+    input.focus();
+    render();
+  });
+
+  colorList.addEventListener('click', function (event) {
+    var btn = event.target.closest('button');
+    if (!btn) return;
+    hue = btn.getAttribute('data-hue') || '';
+    paintColors();
+    render();
+  });
+
+  findForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+  });
 
   fetch('index.json', { cache: 'no-store' })
     .then(function (r) {
       if (!r.ok) throw new Error(String(r.status));
       return r.json();
     })
-    .then(render)
+    .then(function (items) {
+      all = Array.isArray(items) ? items : [];
+      render();
+    })
     .catch(function () {
       entriesEmpty.hidden = false;
       entriesEmpty.textContent = '画布上的东西暂时取不到。';
