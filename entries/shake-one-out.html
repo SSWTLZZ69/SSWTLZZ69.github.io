@@ -237,7 +237,8 @@
     var value = String(url || '');
     if (!value) return null;
     if (value.charAt(0) === '#' || /^[a-z][a-z0-9+.-]*:/i.test(value) || value.indexOf('//') === 0) return value;
-    return value.replace(/^\.?\//, '').replace(/^entries\//, '');
+    value = value.replace(/^\.?\//, '');
+    return value.indexOf('entries/') === 0 ? value.slice(8) : '../' + value;
   }
 
   function chip(color) {

@@ -74,6 +74,14 @@
 (function () {
   var list = document.getElementById('entries');
   var entriesEmpty = document.getElementById('entries-empty');
+
+  function hrefOf(url) {
+    var value = String(url || '');
+    if (!value) return null;
+    if (value.charAt(0) === '#' || /^[a-z][a-z0-9+.\-]*:/i.test(value) || value.indexOf('//') === 0) return value;
+    value = value.replace(/^\.?\//, '');
+    return value.indexOf('entries/') === 0 ? value.slice(8) : '../' + value;
+  }
   var note = document.getElementById('entries-note');
   var findForm = document.getElementById('find');
   var input = document.getElementById('find-input');
@@ -234,7 +242,7 @@
 
       if (item.url) {
         var a = document.createElement('a');
-        a.href = item.url;
+        a.href = hrefOf(item.url);
         a.appendChild(body);
         li.appendChild(a);
       } else {
